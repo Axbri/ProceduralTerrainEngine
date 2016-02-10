@@ -81,21 +81,39 @@ void UserInput::scroll_callback(GLFWwindow* window, double xoffset, double yoffs
 	deltaScroll = yoffset;
 }
 
-// Get the absolute pixel position of the mouse curser in the window. 
-void UserInput::getMousePos(double &x, double &y)
+bool UserInput::pollKey(GLFWwindow* window, int key)
 {
-	x = mouseX;
-	y = mouseY;
+	int state = glfwGetKey(window, key);
+	if (state == GLFW_PRESS)
+		return true; 
+	else
+		return false;
+}
+
+// Get the absolute pixel position of the mouse curser in the window. The possition is returnet in pixel coordinates
+Vec2 UserInput::getMousePos()
+{
+	return Vec2(mouseX, mouseY); 
+}
+
+// Get the absolute pixel position of the mouse curser in the window. The position is returned in 
+// normalized device coordinates. coords ranging from -1 to 1. 
+Vec2 UserInput::getMouseNormalizedDeviceCoords(int screenWithPixels, int screenHeightPixels)
+{
+	double normalizedX = ((mouseX / screenWithPixels) * 2) - 1;
+	double normalizedY = ((mouseY / screenHeightPixels) * 2) - 1;
+	return Vec2(normalizedX, -normalizedY);
 }
 
 // get the velosity of the mouse curser. How mush the curser has moved sice 
 // the last time this function was called or the last time the mouse moved. 
-void UserInput::getMouseVel(double &dx, double &dy)
+Vec2 UserInput::getMouseVel()
 {
-	dx = MouseSpeedX;
-	dy = MouseSpeedY;
+	double dx = MouseSpeedX;
+	double dy = MouseSpeedY;
 	MouseSpeedX = 0; 
 	MouseSpeedY = 0;
+	return Vec2(dx, dy); 
 }
 
 // Get the boolean state the the left mouse button, 

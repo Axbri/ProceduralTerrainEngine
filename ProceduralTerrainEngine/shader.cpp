@@ -5,7 +5,6 @@ Shader::Shader()
 
 }
 
-
 // The folowing functions are used to set uniform variables in this shader program. 
 // Do not forget to start the shader program before calling any of those functions. 
 void Shader::setUniformMat4(char *variableName, float value[])
@@ -14,10 +13,20 @@ void Shader::setUniformMat4(char *variableName, float value[])
 	glUniformMatrix4fv(location, 1, GL_TRUE, value);	// 1 = one matrix is loaded to the GPU
 }
 
+void Shader::setUniformMat4(char * variableName, Mat4 matrix)
+{
+	setUniformMat4(variableName, matrix.M); 
+}
+
 void Shader::setUniformVec4(char *variableName, float x1, float x2, float x3, float x4)
 {
 	GLint location = glGetUniformLocation(thisShader, variableName);
 	glUniform4f(location, x1, x2, x3, x4);
+}
+
+void Shader::setUniformVec4(char * variableName, Vec4 vector)
+{
+	setUniformVec4(variableName, vector.x1, vector.x2, vector.x3, vector.x4);
 }
 
 void Shader::setUniformVec3(char *variableName, float x1, float x2, float x3)
@@ -26,10 +35,20 @@ void Shader::setUniformVec3(char *variableName, float x1, float x2, float x3)
 	glUniform3f(location, x1, x2, x3);
 }
 
+void Shader::setUniformVec3(char * variableName, Vec3 vector)
+{
+	setUniformVec3(variableName, vector.x, vector.y, vector.z);
+}
+
 void Shader::setUniformVec2(char *variableName, float x1, float x2)
 {
 	GLint location = glGetUniformLocation(thisShader, variableName);
 	glUniform2f(location, x1, x2);
+}
+
+void Shader::setUniformVec2(char * variableName, Vec2 vector)
+{
+	setUniformVec2(variableName, vector.x, vector.y);
 }
 
 void Shader::setUniformFloat(char *variableName, float value)
@@ -62,7 +81,7 @@ void Shader::cleanUp()
 	glDeleteProgram(thisShader);
 }
 
-// A function that reads two textfiles containing the vertex and 
+// A private function that reads two textfiles containing the vertex and 
 // fragment shader programs, compiles and links them, and creats a shader program object. 
 // if any error occur during compilation or linking, they are showd in the console. 
 void Shader::createShader(char *vertexshaderfile, char *fragmentshaderfile)
@@ -89,13 +108,16 @@ void Shader::createShader(char *vertexshaderfile, char *fragmentshaderfile)
 	glCompileShader(vertexShader);
 	free((void *)vertexShaderAssembly);
 
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS,
-		&vertexCompiled);
+	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vertexCompiled);
 	if (vertexCompiled == GL_FALSE)
 	{
 		glGetShaderInfoLog(vertexShader, sizeof(str), NULL, str);
 		fprintf(stderr, "Vertex shader compile error: \n");
 		fprintf(stderr, str);
+	}
+	else
+	{
+		cout << "Shader program: \"" << vertexshaderfile << "\" compiled sucessfully. " << endl;
 	}
 
 	// Create the fragment shader.
@@ -114,6 +136,10 @@ void Shader::createShader(char *vertexshaderfile, char *fragmentshaderfile)
 		fprintf(stderr, "Fragment shader compile error: \n");
 		fprintf(stderr, str);
 	}
+	else
+	{
+		cout << "Shader program: \"" << fragmentshaderfile << "\" compiled sucessfully. " << endl;
+	}
 
 	// Create a program object and attach the two compiled shaders.
 	thisShader = glCreateProgram();
@@ -129,9 +155,14 @@ void Shader::createShader(char *vertexshaderfile, char *fragmentshaderfile)
 		glGetProgramInfoLog(thisShader, sizeof(str), NULL, str);
 		fprintf(stderr, "Program object linking error: \n");
 		fprintf(stderr, str);
+	} 
+	else
+	{
+		cout << "Shader program: \"" << vertexshaderfile << " / " << fragmentshaderfile << "\" linked sucessfully. " << endl << endl;
 	}
+
 	glDeleteShader(vertexShader);   // These are no longer needed
-	glDeleteShader(fragmentShader); // after successful linking
+	glDeleteShader(fragmentShader); // after successful linking	
 }
 
 // Override the Win32 filelength() function with a version that takes a 

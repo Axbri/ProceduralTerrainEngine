@@ -75,25 +75,6 @@ GLFWwindow* init()
 	return window;
 }
 
-// Render a model
-void render_model(GLFWwindow* window, Model model)
-{
-	glBindVertexArray(model.get_id());
-
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, model.get_texture());
-
-	glDrawElements(GL_TRIANGLES, model.get_vertexcount(), GL_UNSIGNED_INT, 0);
-
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
-
-	glBindVertexArray(0);
-}
-
 // close the GLFW-windoe and tenminate GLFW
 void cleanup(GLFWwindow* window)
 {
@@ -132,7 +113,7 @@ int main(void)
 		// ================================== render ==================================
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		if (UserInput::getRightMouseButton())
+		if (UserInput::getCenterMouseButton())
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		else
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

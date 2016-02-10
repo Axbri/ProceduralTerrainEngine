@@ -60,7 +60,7 @@ TerrainChunk::TerrainChunk(Loader loader, double x, double z)
 		}
 	}
 
-	model = loader.createModel(positions, positionIndex, textureCoords, textureCoordIndex, indices, indicesIndex);
+	model = loader.createModel(positions, positionIndex, textureCoords, textureCoordIndex, normals, normalIndex, indices, indicesIndex);
 }
 
 TerrainChunk::~TerrainChunk()

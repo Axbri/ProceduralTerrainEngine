@@ -3,14 +3,33 @@
 using namespace std;
 
 // creates a vertax array object and uploads it to the GPU, a new model object is created containing a refferance to the VAO. 
-Model Loader::createModel(float positions[], int size_pos, float textureCoords[], int size_texCoords, int indices[], int size_index)
+Model Loader::createModel(float positions[], int size_pos, float textureCoords[], int size_texCoords, float normals[], int size_normals, int indices[], int size_index)
 {	
 	GLuint vao = createVao();
 	bindIndicesBuffer(indices, size_index); 
-	storeDataInAtributeList(0, 3, positions, size_pos); 
-	storeDataInAtributeList(1, 2, textureCoords, size_texCoords);
+	GLuint pos_vbo = storeDataInAtributeList(0, 3, positions, size_pos);
+	GLuint tex_vbo = storeDataInAtributeList(1, 2, textureCoords, size_texCoords);
+	GLuint norm_vbo = storeDataInAtributeList(2, 3, normals, size_normals);
 	glBindVertexArray(0);
-	return Model(vao, size_index);
+	return Model(vao, size_index, pos_vbo, tex_vbo, norm_vbo);
+}
+
+Model Loader::createTexturelessModel(float positions[], int size_pos, float normals[], int size_normals, int indices[], int size_index)
+{
+	GLuint vao = createVao();
+	bindIndicesBuffer(indices, size_index);
+	GLuint pos_vbo = storeDataInAtributeList(0, 3, positions, size_pos);
+	GLuint norm_vbo = storeDataInAtributeList(1, 3, normals, size_normals);
+	glBindVertexArray(0);
+	return Model(vao, size_index, pos_vbo, norm_vbo);
+}
+
+GLuint Loader::create2Dmodel(float positions[], int size_pos)
+{
+	GLuint vao = createVao();
+	GLuint pos_vbo = storeDataInAtributeList(0, 2, positions, size_pos);
+	glBindVertexArray(0);
+	return vao; 
 }
 
 // Creates a new empty vertex array object and returns it's ID. 
@@ -35,7 +54,7 @@ void Loader::bindIndicesBuffer(int indices[], int n)
 
 // Creates a new vertex buffer and fills it with the specified data. CoordinateSize is the number of 
 // ellements per vertex, for example 3 for 3D position and 2 for texture coordinate. 
-void Loader::storeDataInAtributeList(int attributeNumber, int coordinateSize, float data[], int n) 
+GLuint Loader::storeDataInAtributeList(int attributeNumber, int coordinateSize, float data[], int n)
 {
 	GLuint vbo = 0;
 	glGenBuffers(1, &vbo);
@@ -44,6 +63,15 @@ void Loader::storeDataInAtributeList(int attributeNumber, int coordinateSize, fl
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, n * sizeof(float), data, GL_STATIC_DRAW);
 	glVertexAttribPointer(attributeNumber, coordinateSize, GL_FLOAT, false, 0, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	return vbo; 
+}
+
+void Loader::updateDataInAtributeList(GLuint vbo, float data[], int n)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, n * sizeof(float), data, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, n, data);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 

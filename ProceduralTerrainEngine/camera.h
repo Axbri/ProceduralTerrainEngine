@@ -1,36 +1,38 @@
-#ifndef CAMERA_H_INCLUDED
-#define CAMERA_H_INCLUDED
+#pragma once
 
 #include <GL/glew.h> 
 #include <algorithm>
-#include "matrixmath.h"
 #include "userinput.h"
+#include "mat4.h"
 
 using namespace std;
 
 class Camera
 {
 public:
-	Camera(float aspectRatio);
+	Camera(double aspectRatio);
 	void update(double delta_time);
-	void getViewMatrix(GLfloat matrix[]);
-	void getProjectionMatrix(GLfloat matrix[]);
+	Mat4 getViewMatrix();
+	Mat4 getProjectionMatrix();
+	Vec3 getPosition(); 
+	Vec3 getViewVector(); 
+	double getDistance() const;
+
+	const double NEAR_CLIP = 0.01;
+	const double FAR_CLIP = 100;
 
 private:
 	void updateViewMatrix(); 
-	double xPos;
-	double yPos;
-	double zPos;
+	Vec3 position;
 	double distance;
 	double orbitAngle;
 	double tiltAngle;
-	GLfloat viewMatrix[16];
-	GLfloat projMatrix[16];
+	Mat4 viewMatrix;
+	Mat4 projMatrix;
 
 	const double MOUSE_ROTATION_SENSITIVITY = 0.015;
 	const double DOLLY_SENSITIVITY = 0.1;
-	const double MIN_DOLLY = 0.5;
-	const double MAX_DOLLY = 50;
+	const double MIN_DOLLY = 2;
+	const double MAX_DOLLY = 30;
+	
 };
-
-#endif

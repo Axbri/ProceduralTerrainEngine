@@ -28,22 +28,14 @@ Terrain::~Terrain()
 
 void Terrain::render(GLFWwindow* window, Camera camera)
 {
-	float projectionMatrix[16];
-	float viewMatrix[16];
-	float modelMatrix[16];
-
-	camera.getProjectionMatrix(projectionMatrix);
-	camera.getViewMatrix(viewMatrix);
-
 	shader.start();
-	shader.setUniformMat4("projectionMatrix", projectionMatrix);
-	shader.setUniformMat4("viewMatrix", viewMatrix);
+	shader.setUniformMat4("projectionMatrix", camera.getProjectionMatrix());
+	shader.setUniformMat4("viewMatrix", camera.getViewMatrix());
 	
 	for (int i = 0; i < chunks.size(); i++)
 	{
 		Model chunkModel = chunks[i].getModel();
-		chunkModel.getModelMatrix(modelMatrix);
-		shader.setUniformMat4("modelMatrix", modelMatrix);
+		shader.setUniformMat4("modelMatrix", chunkModel.getModelMatrix());
 
 		glBindVertexArray(chunkModel.get_id());
 		glEnableVertexAttribArray(0);
