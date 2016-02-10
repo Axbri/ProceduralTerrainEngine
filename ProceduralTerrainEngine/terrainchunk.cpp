@@ -37,9 +37,9 @@ TerrainChunk::TerrainChunk(Loader loader, double x, double z)
 			textureCoords[textureCoordIndex++] = texCoordV;
 
 			Vec3 normal = TerrainHeightGenerator::getNormal(xPos + localVertexPosX, zPos + localVertexPosZ); 
-			normals[normalIndex++] = xPos + localVertexPosX;
-			normals[normalIndex++] = (float)height;
-			normals[normalIndex++] = zPos + localVertexPosZ;
+			normals[normalIndex++] = normal.x;
+			normals[normalIndex++] = normal.y;
+			normals[normalIndex++] = normal.z;
 		}
 	}
 

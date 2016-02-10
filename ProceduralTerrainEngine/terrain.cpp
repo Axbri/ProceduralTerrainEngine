@@ -26,11 +26,12 @@ Terrain::~Terrain()
 	shader.cleanUp(); 
 }
 
-void Terrain::render(GLFWwindow* window, Camera camera)
+void Terrain::render(GLFWwindow* window, Camera camera, vector<Light> allLights)
 {
 	shader.start();
 	shader.setUniformMat4("projectionMatrix", camera.getProjectionMatrix());
 	shader.setUniformMat4("viewMatrix", camera.getViewMatrix());
+	Light::loadLightsToShader(shader, allLights); 
 	
 	for (int i = 0; i < chunks.size(); i++)
 	{
@@ -40,6 +41,7 @@ void Terrain::render(GLFWwindow* window, Camera camera)
 		glBindVertexArray(chunkModel.get_id());
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, chunkModel.get_texture());
@@ -47,6 +49,7 @@ void Terrain::render(GLFWwindow* window, Camera camera)
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
+		glDisableVertexAttribArray(2);
 		glBindVertexArray(0);
 	}
 	

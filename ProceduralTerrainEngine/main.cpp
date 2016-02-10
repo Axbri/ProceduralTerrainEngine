@@ -5,12 +5,16 @@
 #include <stdlib.h>  
 #include <sstream>
 #include <iostream>
+#include <iomanip>
+#include <vector>
 
 #include "loader.h"
 #include "camera.h"
 #include "shader.h"
 #include "userinput.h"
 #include "terrain.h"
+#include "light.h"
+#include "font.h"
 
 // Define an error callback  
 static void error_callback(int error, const char* description)
@@ -67,11 +71,19 @@ GLFWwindow* init()
 	glfwSetScrollCallback(window, UserInput::scroll_callback);
 
 	//Initialize GLEW    
+	glewExperimental = GL_TRUE;
 	if (GLenum err = glewInit() != GLEW_OK)
 	{
 		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
 		exit(EXIT_FAILURE);
 	}
+	// print information about the computer 
+	cout << "GLFW version                : " << glfwGetVersionString() << endl;
+	cout << "GLEW_VERSION                : " << glewGetString(GLEW_VERSION) << endl;
+	cout << "GL_VERSION                  : " << glGetString(GL_VERSION) << endl;
+	cout << "GL_VENDOR                   : " << glGetString(GL_VENDOR) << endl;
+	cout << "GL_RENDERER                 : " << glGetString(GL_RENDERER) << endl;
+	cout << "GL_SHADING_LANGUAGE_VERSION : " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl << endl;
 	return window;
 }
 
@@ -97,6 +109,12 @@ int main(void)
 	Terrain terrain = Terrain(loader); 
 	Camera camera = Camera((float)windowHeight / (float)windowWidth);
 
+	vector<Light> allLights;
+
+	// one light realy far away (without attenuation)
+	allLights.push_back(Light{ 100, 400, 400 });
+	allLights[0].color = Vec3(0.8, 0.8, 0.8);
+
 	// set the backgorund color and enable depth testing
 	glClearColor(0.4f, 0.6f, 0.7f, 0.0f);
 	glDepthFunc(GL_LESS);
@@ -118,7 +136,7 @@ int main(void)
 		else
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-		terrain.render(window, camera);
+		terrain.render(window, camera, allLights);
 		
 		//Swap buffers  
 		glfwSwapBuffers(window);
