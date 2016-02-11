@@ -11,8 +11,8 @@ uniform sampler2D mainTexture;
 uniform vec3 lightColor[8]; 
 uniform vec3 lightAttenuation[8];
 
-const float shineDampener = 2.0; 
-const float reflectance = 0.2; 
+const float shineDampener = 0.0; 
+const float reflectance = 0.0; 
 const float ambient = 0.15; 
 
 void main (void) 

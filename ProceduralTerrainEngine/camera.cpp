@@ -8,7 +8,7 @@ using namespace std;
 Camera::Camera(double aspectRatio)
 {
 	position = Vec3{ 0.0f, 1.2f, 0.0f };
-	distance = 2.5f;	// the distance from the camera the the center position in OpenGL units. 
+	distance = (MAX_DOLLY + MIN_DOLLY) / 2;	// the distance from the camera the the center position in OpenGL units. 
 	orbitAngle = 1.2f;	// the camera's orbiting angle around the center position in radians
 	tiltAngle = -0.5f;	// the camera's tilt angle around the center position in radians
 	updateViewMatrix(); 
