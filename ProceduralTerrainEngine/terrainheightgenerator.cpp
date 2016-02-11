@@ -1,20 +1,10 @@
 #include "terrainheightgenerator.h"
 
-
-
 double TerrainHeightGenerator::getHeight(double xPos, double zPos)
 {
-	//return (sin(xPos) + sin(zPos/2)) / 2;
-	//return getSmoothNoise((int)xPos, (int)zPos) * AMPLITUDE;
-
-	/*float total = SimplexNoise::noise((float)xPos/20, (float)zPos/20) * AMPLITUDE;
-	total += SimplexNoise::noise((float)xPos / 10, (float)zPos / 10) * AMPLITUDE/3.0;
-	total += SimplexNoise::noise((float)xPos / 5, (float)zPos / 5) * AMPLITUDE/9.0;
-	*/
-
-	double AMPLITUDE = 5.0;
+	double AMPLITUDE = 4.0;
 	int OCTAVES = 6;
-	double ROUGHNESS = 0.28;
+	double ROUGHNESS = 0.3;
 
 	double total{ 0 };
 	double d = pow(2, OCTAVES - 1);
@@ -26,7 +16,6 @@ double TerrainHeightGenerator::getHeight(double xPos, double zPos)
 	}
 
 	return total + AMPLITUDE/2.0;
-
 }
 
 Vec3 TerrainHeightGenerator::getNormal(double xPos, double zPos)
@@ -40,9 +29,6 @@ Vec3 TerrainHeightGenerator::getNormal(double xPos, double zPos)
 	Vec3 normal = Vec3(heightVest - heightEast, 2.0, heightSouth - heightNorth);
 	normal.normalize(); 
 	return normal; 
-
-
-
 }
 
 double TerrainHeightGenerator::getNoise(double x, double z)
@@ -58,10 +44,6 @@ double TerrainHeightGenerator::getSmoothNoise(int x, int z)
 	double corners = (getNoise(x-1, z-1) + getNoise(x+1, z-1) + getNoise(x-1, z+1) + getNoise(x+1, z+1)) / 16.0;
 	double sides = (getNoise(x, z+1) + getNoise(x+1, z) + getNoise(x, z-1) + getNoise(x, z+1)) / 8.0;
 	double center = getNoise(x, z) / 2.0;
-
 	return corners + sides + center;
-}*/
-
-
-// srand (1); för att sätta seed
-// rand() Returns a pseudo-random integral number in the range between 0 and RAND_MAX.
+}
+*/

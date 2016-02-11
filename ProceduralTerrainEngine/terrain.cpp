@@ -9,11 +9,11 @@ Terrain::Terrain(Loader loader)
 	shader.createShader("terrain_vert.glsl", "terrain_frag.glsl");
 	GLuint texture = loader.loadBMPtexture("lushgrass.bmp");
 	
-	for (int x = 0; x < 5; x++)
+	for (int x = 0; x < 9; x++)
 	{
-		for (int z = 0; z < 5; z++)
+		for (int z = 0; z < 9; z++)
 		{
-			TerrainChunk chunk = TerrainChunk(loader, x * TerrainChunk::SIZE - 40, z * TerrainChunk::SIZE - 40);			
+			TerrainChunk chunk = TerrainChunk(loader, x * TerrainChunk::SIZE - 72, z * TerrainChunk::SIZE - 72);			
 			chunk.getModel().set_texture(texture);
 			chunks.push_back(chunk);
 		}
