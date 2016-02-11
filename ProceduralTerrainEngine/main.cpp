@@ -113,7 +113,9 @@ int main(void)
 
 	// one light realy far away (without attenuation)
 	allLights.push_back(Light{ 100, 400, 400 });
-	allLights[0].color = Vec3(0.8, 0.8, 0.8);
+	allLights[0].color = Vec3(0.8, 0.8, 0.7);
+	allLights.push_back(Light{ 100, 200, -400 });
+	allLights[1].color = Vec3(0.8, 0.8, 0.7);
 
 	// set the backgorund color and enable depth testing
 	glClearColor(0.4f, 0.6f, 0.7f, 0.0f);

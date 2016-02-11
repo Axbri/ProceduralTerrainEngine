@@ -12,11 +12,11 @@ public:
 	
 	static double getHeight(double xPos, double zPos);
 	static Vec3 getNormal(double xPos, double zPos);
-
+	/*
 	static constexpr double AMPLITUDE = 5.0;
-	static constexpr int OCTAVES = 3;
+	static constexpr int OCTAVES = 5;
 	static constexpr double ROUGHNESS = 0.1;
-
+	*/
 private: 
 
 	static double getNoise(double x, double z);

@@ -1,5 +1,6 @@
 #version 330 core
 
+in vec3 interpolatedWorldPos; 
 in vec2 interpolatedTextureCoords; 
 in vec3 interpolatedNormal;
 in vec3 toLightVector[8]; 
@@ -17,7 +18,7 @@ const float ambient = 0.15;
 
 void main (void) 
 {
-	vec4 textureColor = texture(mainTexture, interpolatedTextureCoords * 3);
+	vec4 textureColor = texture(mainTexture, interpolatedTextureCoords * 16);
 		
 	vec3 normal = normalize(interpolatedNormal); 	
 	vec3 unitToCameraVector = normalize(toCameraVector);	
@@ -37,9 +38,14 @@ void main (void)
 		totalSpecular = totalSpecular + (pow(specularFactor, shineDampener) * lightColor[i] * clamp(reflectance, 0.0, 1.0)) / attenuationFactor; 
 	}
 		
+	if(interpolatedWorldPos.y < 0)
+		totalDiffuse = totalDiffuse - 0.3; 
+		
 	totalDiffuse = max(totalDiffuse, ambient); 	// ambient light
 	totalDiffuse = min(totalDiffuse, 1.0);
 	totalSpecular = min(totalSpecular, 1.0);
+	
+	
 	
 	vec3 materialAndLighting = textureColor.xyz * totalDiffuse + totalSpecular; 
 	

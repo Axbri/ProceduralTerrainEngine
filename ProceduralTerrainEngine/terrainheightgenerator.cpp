@@ -12,16 +12,20 @@ double TerrainHeightGenerator::getHeight(double xPos, double zPos)
 	total += SimplexNoise::noise((float)xPos / 5, (float)zPos / 5) * AMPLITUDE/9.0;
 	*/
 
-	float total{ 0 }; 
-	float d = pow(2, OCTAVES - 1); 
+	double AMPLITUDE = 5.0;
+	int OCTAVES = 6;
+	double ROUGHNESS = 0.28;
+
+	double total{ 0 };
+	double d = pow(2, OCTAVES - 1);
 	for (int i{ 0 }; i < OCTAVES; i++)
 	{
-		float freq = pow(2, i) / d; 
-		float amplitude = pow(ROUGHNESS, i) * AMPLITUDE; 
-		total += getNoise(xPos, zPos) * amplitude;
+		double freq = pow(2, i) / d;
+		double amplitude = pow(ROUGHNESS, i) * AMPLITUDE;
+		total += getNoise(xPos * freq, zPos * freq) * amplitude;
 	}
 
-	return total; 
+	return total + AMPLITUDE/2.0;
 
 }
 
@@ -45,7 +49,7 @@ double TerrainHeightGenerator::getNoise(double x, double z)
 {
 	//srand(x * 53737833 + z * 2757536 + SEED);
 	//return ((rand() / (double)RAND_MAX) * 2.0) - 1.0;
-	return SimplexNoise::noise((float)x / 10, (float)z / 10); 
+	return SimplexNoise::noise((float)x, (float)z); 
 }
 
 /*
