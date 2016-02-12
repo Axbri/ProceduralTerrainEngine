@@ -7,18 +7,18 @@ Terrain::Terrain(Loader loader)
 {
 	shader = Shader();
 	shader.createShader("terrain_vert.glsl", "terrain_frag.glsl");
-	GLuint texture = loader.loadBMPtexture("lushgrass.bmp");
+	grassTexture = loader.loadBMPtexture("lushgrass.bmp");
+	rockTexture = loader.loadBMPtexture("rock.bmp");
+	sandTexture = loader.loadBMPtexture("sand.bmp");
 	
 	for (int x = 0; x < 9; x++)
 	{
 		for (int z = 0; z < 9; z++)
 		{
-			TerrainChunk chunk = TerrainChunk(loader, x * TerrainChunk::SIZE - 72, z * TerrainChunk::SIZE - 72);			
-			chunk.getModel().set_texture(texture);
+			TerrainChunk chunk = TerrainChunk(loader, x * TerrainChunk::SIZE - 72, z * TerrainChunk::SIZE - 72);					
 			chunks.push_back(chunk);
 		}
-	}
-	
+	}	
 }
 
 Terrain::~Terrain()
@@ -35,8 +35,11 @@ void Terrain::render(GLFWwindow* window, Camera camera, vector<Light> allLights)
 	
 	for (int i = 0; i < chunks.size(); i++)
 	{
-		Model chunkModel = chunks[i].getModel();
+		Model chunkModel = chunks[i].getModel(camera);
 		shader.setUniformMat4("modelMatrix", chunkModel.getModelMatrix());
+		shader.setUniformInt("grassTexture", 0); 
+		shader.setUniformInt("rockTexture", 1);
+		shader.setUniformInt("sandTexture", 2);
 
 		glBindVertexArray(chunkModel.get_id());
 		glEnableVertexAttribArray(0);
@@ -44,7 +47,12 @@ void Terrain::render(GLFWwindow* window, Camera camera, vector<Light> allLights)
 		glEnableVertexAttribArray(2);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, chunkModel.get_texture());
+		glBindTexture(GL_TEXTURE_2D, grassTexture);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, rockTexture);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, sandTexture);
+
 		glDrawElements(GL_TRIANGLES, chunkModel.get_vertexcount(), GL_UNSIGNED_INT, 0);
 
 		glDisableVertexAttribArray(0);

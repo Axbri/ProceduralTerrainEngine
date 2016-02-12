@@ -8,7 +8,10 @@ in vec3 toCameraVector;
 
 out vec4 pixel_color; 
 
-uniform sampler2D mainTexture; 
+uniform sampler2D grassTexture; 
+uniform sampler2D rockTexture; 
+uniform sampler2D sandTexture; 
+
 uniform vec3 lightColor[8]; 
 uniform vec3 lightAttenuation[8];
 
@@ -18,9 +21,28 @@ const float ambient = 0.15;
 
 void main (void) 
 {
-	vec4 textureColor = texture(mainTexture, interpolatedTextureCoords * 16);
-		
 	vec3 normal = normalize(interpolatedNormal); 	
+
+	vec4 grassColor = texture(grassTexture, interpolatedTextureCoords * 16);
+	vec4 rockColor = texture(rockTexture, interpolatedTextureCoords * 8);
+	vec4 sandColor = texture(sandTexture, interpolatedTextureCoords * 8);
+	
+	float normalAngle = clamp(length(vec2(normal.x, normal.z)), 0, 1); 
+	
+	float sandMixFactor = normalAngle/8 + clamp(1-interpolatedWorldPos.y, 0, 1); 	
+	
+	vec4 textureColor = mix(grassColor, sandColor, smoothstep(0.4, 0.9, sandMixFactor)); 
+	
+	float rockMixFactor = smoothstep(0.2, 0.5, normalAngle); 		
+	textureColor = mix(textureColor, rockColor, rockMixFactor); 
+			
+	
+			
+			
+			
+	if(interpolatedWorldPos.y < 0)
+		textureColor = vec4(0.4, 0.5, 0.9, 1.0);
+			
 	vec3 unitToCameraVector = normalize(toCameraVector);	
 	vec3 totalDiffuse = vec3(0.0); 
 	vec3 totalSpecular = vec3(0.0); 
@@ -38,8 +60,7 @@ void main (void)
 		totalSpecular = totalSpecular + (pow(specularFactor, shineDampener) * lightColor[i] * clamp(reflectance, 0.0, 1.0)) / attenuationFactor; 
 	}
 		
-	if(interpolatedWorldPos.y < 0)
-		totalDiffuse = totalDiffuse - 0.3; 
+	
 		
 	totalDiffuse = max(totalDiffuse, ambient); 	// ambient light
 	totalDiffuse = min(totalDiffuse, 1.0);
@@ -48,6 +69,8 @@ void main (void)
 	
 	
 	vec3 materialAndLighting = textureColor.xyz * totalDiffuse + totalSpecular; 
+	
+	
 	
 	pixel_color = vec4(materialAndLighting, 1.0);
 }

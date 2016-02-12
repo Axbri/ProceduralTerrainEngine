@@ -99,7 +99,7 @@ void Shader::createShader(char *vertexshaderfile, char *fragmentshaderfile)
 	GLint shadersLinked;
 	char str[4096]; // For error messages from the GLSL compiler and linker
 
-					// Create the vertex shader.
+	// Create the vertex shader.
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 
 	vertexShaderAssembly = readShaderFile(vertexshaderfile);
@@ -121,7 +121,7 @@ void Shader::createShader(char *vertexshaderfile, char *fragmentshaderfile)
 	}
 
 	// Create the fragment shader.
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	fragmentShader = (GL_FRAGMENT_SHADER);
 
 	fragmentShaderAssembly = readShaderFile(fragmentshaderfile);
 	fragmentShaderStrings[0] = (char*)fragmentShaderAssembly;

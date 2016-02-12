@@ -17,5 +17,6 @@ public:
 private: 
 	vector<TerrainChunk> chunks; 
 	Shader shader;
+	GLuint grassTexture, rockTexture, sandTexture;
 };
 
