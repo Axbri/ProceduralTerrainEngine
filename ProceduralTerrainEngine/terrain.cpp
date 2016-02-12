@@ -32,15 +32,15 @@ void Terrain::render(GLFWwindow* window, Camera camera, vector<Light> allLights)
 	shader.setUniformMat4("projectionMatrix", camera.getProjectionMatrix());
 	shader.setUniformMat4("viewMatrix", camera.getViewMatrix());
 	Light::loadLightsToShader(shader, allLights); 
+	shader.setUniformInt("grassTexture", 0);
+	shader.setUniformInt("rockTexture", 1);
+	shader.setUniformInt("sandTexture", 2);
 	
 	for (int i = 0; i < chunks.size(); i++)
 	{
 		Model chunkModel = chunks[i].getModel(camera);
 		shader.setUniformMat4("modelMatrix", chunkModel.getModelMatrix());
-		shader.setUniformInt("grassTexture", 0); 
-		shader.setUniformInt("rockTexture", 1);
-		shader.setUniformInt("sandTexture", 2);
-
+		
 		glBindVertexArray(chunkModel.get_id());
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);

@@ -35,11 +35,7 @@ void main (void)
 	
 	float rockMixFactor = smoothstep(0.2, 0.5, normalAngle); 		
 	textureColor = mix(textureColor, rockColor, rockMixFactor); 
-			
-	
-			
-			
-			
+						
 	if(interpolatedWorldPos.y < 0)
 		textureColor = vec4(0.4, 0.5, 0.9, 1.0);
 			

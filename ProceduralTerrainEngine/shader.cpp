@@ -121,7 +121,7 @@ void Shader::createShader(char *vertexshaderfile, char *fragmentshaderfile)
 	}
 
 	// Create the fragment shader.
-	fragmentShader = (GL_FRAGMENT_SHADER);
+	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
 	fragmentShaderAssembly = readShaderFile(fragmentshaderfile);
 	fragmentShaderStrings[0] = (char*)fragmentShaderAssembly;
