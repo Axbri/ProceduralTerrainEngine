@@ -15,6 +15,7 @@
 #include "terrain.h"
 #include "light.h"
 #include "font.h"
+#include "Player.h"
 
 // Define an error callback  
 static void error_callback(int error, const char* description)
@@ -106,8 +107,8 @@ int main(void)
 	cout << "window height: " << windowWidth << "px, window width: " << windowHeight << "px " << endl;
 
 	Loader loader;
-	Terrain terrain = Terrain(loader); 
-	Camera camera = Camera((float)windowHeight / (float)windowWidth);
+	Terrain terrain{ loader };
+	Player player{ 0, 0, (float)windowHeight / (float)windowWidth };
 
 	vector<Light> allLights;
 
@@ -128,7 +129,7 @@ int main(void)
 	do //Main Loop  
 	{
 		// ================================== update ==================================
-		camera.update(delta_time);
+		player.update(delta_time); 
 		
 		// ================================== render ==================================
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -138,7 +139,7 @@ int main(void)
 		else
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-		terrain.render(window, camera, allLights);
+		terrain.render(window, player.getCamera(), allLights);
 		
 		//Swap buffers  
 		glfwSwapBuffers(window);

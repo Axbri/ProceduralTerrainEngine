@@ -92,7 +92,7 @@ TerrainChunk::~TerrainChunk()
 
 Model TerrainChunk::getModel(Camera camera)
 {
-	Vec3 cameraToChunk = camera.getPosition() - Vec3{ xPos+SIZE/2 , 0, zPos + SIZE / 2 };
+	Vec3 cameraToChunk = camera.getPosition() - Vec3{ xPos + SIZE / 2 , 0, zPos + SIZE / 2 };
 
 	double distance = cameraToChunk.length(); 
 
