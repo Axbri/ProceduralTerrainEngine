@@ -129,7 +129,7 @@ int main(void)
 	do //Main Loop  
 	{
 		// ================================== update ==================================
-		player.update(delta_time); 
+		player.update(window, delta_time); 
 		
 		// ================================== render ==================================
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
