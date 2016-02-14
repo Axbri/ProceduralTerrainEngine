@@ -105,7 +105,10 @@ int main(void)
 	int windowWidth, windowHeight;
 	glfwGetWindowSize(window, &windowWidth, &windowHeight);
 	cout << "window height: " << windowWidth << "px, window width: " << windowHeight << "px " << endl;
-
+	
+	UserInput::setCursorLocked(window, true);
+	UserInput::setScreenSize(Vec2(windowWidth, windowHeight)); 
+	
 	Loader loader;
 	Terrain terrain{ loader };
 	Player player{ 0, 0, (float)windowHeight / (float)windowWidth };

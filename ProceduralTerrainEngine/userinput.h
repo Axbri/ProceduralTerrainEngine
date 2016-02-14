@@ -20,6 +20,9 @@ public:
 	static bool getCenterMouseButton();
 	static bool getRightMouseButton();
 	static double getMouseDeltaScroll();
+
+	static void setCursorLocked(GLFWwindow* window, bool state);
+	static void setScreenSize(Vec2 size); 
 	
 private: 
 	static double mouseX; 
@@ -30,4 +33,7 @@ private:
 	static bool centerMouseButton;
 	static bool rightMouseButton;
 	static double deltaScroll;
+
+	static bool cursorLocked; 
+	static Vec2 screenSize;
 };

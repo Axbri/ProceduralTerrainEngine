@@ -8,6 +8,8 @@ bool UserInput::leftMouseButton = false;
 bool UserInput::centerMouseButton = false;
 bool UserInput::rightMouseButton = false;
 double UserInput::deltaScroll = 0.0;
+bool UserInput::cursorLocked = false;
+Vec2 UserInput::screenSize{ 0, 0 };
 
 // Callback function for keyboard input from the user. 
 // This function is called automaticaly every time a key on the keybord is pressed or relesed. 
@@ -24,12 +26,24 @@ void UserInput::key_callback(GLFWwindow* window, int key, int scancode, int acti
 // This function is called automaticaly every time the mouse cursor is moved. 
 void UserInput::mouse_pos_callback(GLFWwindow* window, double x, double y)
 {
-	float previusMouseX = mouseX;
-	float previusMouseY = mouseY;
-	mouseX = x;
-	mouseY = y;
-	MouseSpeedX = mouseX - previusMouseX; 
-	MouseSpeedY = mouseY - previusMouseY;
+	if (cursorLocked)
+	{
+		mouseX = mouseY = 0;
+		MouseSpeedX = x - screenSize.x / 2; 
+		MouseSpeedY = y - screenSize.y / 2; 
+		glfwSetCursorPos(window, screenSize.x / 2, screenSize.y / 2);
+	}
+	else
+	{
+		float previusMouseX = mouseX;
+		float previusMouseY = mouseY;
+		mouseX = x;
+		mouseY = y;
+		MouseSpeedX = mouseX - previusMouseX;
+		MouseSpeedY = mouseY - previusMouseY;
+	}
+
+	
 }
 
 // Callback function for mouse button input from the user.
@@ -144,6 +158,24 @@ double UserInput::getMouseDeltaScroll()
 	double temp = deltaScroll; 
 	deltaScroll = 0; 
 	return temp;
+}
+
+void UserInput::setCursorLocked(GLFWwindow* window, bool state)
+{
+	cursorLocked = state; 
+	if (cursorLocked) {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		glfwSetCursorPos(window, screenSize.x / 2, screenSize.y / 2);
+		mouseX = mouseY = 0;
+	}
+	else {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
+}
+
+void UserInput::setScreenSize(Vec2 size)
+{
+	screenSize = size;
 }
 
 
