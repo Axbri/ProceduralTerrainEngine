@@ -5,48 +5,76 @@ using namespace std;
 
 Camera::Camera()
 {
-	position = Vec3{ 0.0, 0.0, 0.0};
-	panAngle = tiltAngle = 0;
+	position = Vec3{ 0.0, 0.0, 0.0 };
+	panAngle = 0; 
+	tiltAngle = 0;
+	targetPosition = Vec3{ 0.0, 0.0, 0.0 };
+	targetPanAngle = 0;
+	targetTiltAngle = 0;
 	updateViewMatrix();
-	projMatrix.loadPerspectiveProjection(2, 1.2f, NEAR_CLIP, FAR_CLIP);
-	
+	projMatrix.loadPerspectiveProjection(2, 1.2f, NEAR_CLIP, FAR_CLIP);	
 }
 
-void Camera::setAspectRatio(double aspectRatio)
+void Camera::setAspectRatio()
 {
-	this->aspectRatio = aspectRatio; 
+	double aspectRatio = WindowSizeHandler::getFrameBufferSize().y / WindowSizeHandler::getFrameBufferSize().x;
 	projMatrix.loadPerspectiveProjection(aspectRatio, 1.2f, NEAR_CLIP, FAR_CLIP);
 }
 
 // Update the cameras position, call this function in the main update loop.
 void Camera::update(double delta_time)
 {
+	// smoothly move the camera around according to the target values. 
+	double posMultiplyer = min(SMOOTH_POSITION_FOLLOW * delta_time, 1.0); 
+	double dirMultiplyer = min(SMOOTH_DIRECTION_FOLLOW * delta_time, 1.0);
+	position += (targetPosition - position) * posMultiplyer;
+	panAngle += (targetPanAngle - panAngle) * dirMultiplyer;
+	tiltAngle += (targetTiltAngle - tiltAngle) * dirMultiplyer;
+
 	updateViewMatrix(); 
 }
 
 void Camera::setPosition(Vec3 pos)
 {
 	this->position = pos; 
+	this->targetPosition = pos;
+}
+
+void Camera::setTargetPosition(Vec3 pos)
+{
+	this->targetPosition = pos;
 }
 
 void Camera::pan(double amount)
 {
-	panAngle += amount; 
+	targetPanAngle += amount;
 }
 
 void Camera::tilt(double amount)
 {
-	tiltAngle += amount; 
+	targetTiltAngle += amount;
 }
 
 void Camera::setPan(double angle)
 {
 	this->panAngle = angle; 
+	this->targetPanAngle = angle; 
 }
 
 void Camera::setTilt(double angle)
 {
 	this->tiltAngle = angle; 
+	this->targetTiltAngle = angle; 
+}
+
+void Camera::setTargetPan(double angle)
+{
+	this->targetPanAngle = angle;
+}
+
+void Camera::setTargetTilt(double angle)
+{
+	this->targetTiltAngle = angle;
 }
 
 Mat4 Camera::getViewMatrix()

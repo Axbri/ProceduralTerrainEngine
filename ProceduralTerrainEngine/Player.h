@@ -6,7 +6,7 @@
 class Player
 {
 public:
-	Player(double x, double z, double aspectRatio);
+	Player(double x, double z);
 
 	void update(GLFWwindow* window, double deltaTime);
 	Camera getCamera(); 

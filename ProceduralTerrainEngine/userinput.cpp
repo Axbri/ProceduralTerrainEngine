@@ -9,17 +9,16 @@ bool UserInput::centerMouseButton = false;
 bool UserInput::rightMouseButton = false;
 double UserInput::deltaScroll = 0.0;
 bool UserInput::cursorLocked = false;
-Vec2 UserInput::screenSize{ 0, 0 };
 
 // Callback function for keyboard input from the user. 
 // This function is called automaticaly every time a key on the keybord is pressed or relesed. 
 void UserInput::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	// close the program if the user presses the escape-key
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) 
-	{
-		glfwSetWindowShouldClose(window, GL_TRUE);
-	}		
+	//if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) 
+	//{
+	//	glfwSetWindowShouldClose(window, GL_TRUE);
+	//}		
 }
 
 // Callback function for mouse position input from the user. 
@@ -29,9 +28,9 @@ void UserInput::mouse_pos_callback(GLFWwindow* window, double x, double y)
 	if (cursorLocked)
 	{
 		mouseX = mouseY = 0;
-		MouseSpeedX = x - screenSize.x / 2; 
-		MouseSpeedY = y - screenSize.y / 2; 
-		glfwSetCursorPos(window, screenSize.x / 2, screenSize.y / 2);
+		MouseSpeedX = x - WindowSizeHandler::getFrameBufferSize().x / 2;
+		MouseSpeedY = y - WindowSizeHandler::getFrameBufferSize().y / 2;
+		glfwSetCursorPos(window, WindowSizeHandler::getFrameBufferSize().x / 2, WindowSizeHandler::getFrameBufferSize().y / 2);
 	}
 	else
 	{
@@ -112,10 +111,10 @@ Vec2 UserInput::getMousePos()
 
 // Get the absolute pixel position of the mouse curser in the window. The position is returned in 
 // normalized device coordinates. coords ranging from -1 to 1. 
-Vec2 UserInput::getMouseNormalizedDeviceCoords(int screenWithPixels, int screenHeightPixels)
+Vec2 UserInput::getMouseNormalizedDeviceCoords()
 {
-	double normalizedX = ((mouseX / screenWithPixels) * 2) - 1;
-	double normalizedY = ((mouseY / screenHeightPixels) * 2) - 1;
+	double normalizedX = ((mouseX / WindowSizeHandler::getFrameBufferSize().x) * 2) - 1;
+	double normalizedY = ((mouseY / WindowSizeHandler::getFrameBufferSize().y) * 2) - 1;
 	return Vec2(normalizedX, -normalizedY);
 }
 
@@ -165,7 +164,7 @@ void UserInput::setCursorLocked(GLFWwindow* window, bool state)
 	cursorLocked = state; 
 	if (cursorLocked) {
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		glfwSetCursorPos(window, screenSize.x / 2, screenSize.y / 2);
+		glfwSetCursorPos(window, WindowSizeHandler::getFrameBufferSize().x / 2, WindowSizeHandler::getFrameBufferSize().y / 2);
 		mouseX = mouseY = 0;
 	}
 	else {
@@ -173,9 +172,9 @@ void UserInput::setCursorLocked(GLFWwindow* window, bool state)
 	}
 }
 
-void UserInput::setScreenSize(Vec2 size)
+bool UserInput::isCursorLocked()
 {
-	screenSize = size;
+	return cursorLocked;
 }
 
 

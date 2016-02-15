@@ -1,10 +1,10 @@
 #include "Player.h"
 
-Player::Player(double x, double z, double aspectRatio)
+Player::Player(double x, double z)
 {
 	position = Vec3{ 0, 0, 0 };
 	facingDirection = headTiltAngle = 0;
-	camera.setAspectRatio(aspectRatio); 
+	camera.setAspectRatio(); 
 	xMomentum = zMomentum = yMomentum = 0;
 	inAir = false; 
 }
@@ -34,15 +34,17 @@ void Player::update(GLFWwindow* window, double deltaTime)
 	forceRight(leftRight * speed);
 
 	doPhysics(deltaTime); 
-	
-	Vec2 mouseVel = UserInput::getMouseVel();
-	facingDirection -= mouseVel.x * MOUSE_ROTATION_SENSITIVITY;
-	headTiltAngle -= mouseVel.y * MOUSE_ROTATION_SENSITIVITY;
-	headTiltAngle = max(-3.14 / 2, min(headTiltAngle, 3.14 / 2));
 
-	camera.setPosition(Vec3(position.x, position.y + EYE_HEIGHT, position.z)); 
-	camera.setPan(facingDirection); 
-	camera.setTilt(headTiltAngle); 
+	if (UserInput::isCursorLocked()) {
+		Vec2 mouseVel = UserInput::getMouseVel();
+		facingDirection -= mouseVel.x * MOUSE_ROTATION_SENSITIVITY;
+		headTiltAngle -= mouseVel.y * MOUSE_ROTATION_SENSITIVITY;
+		headTiltAngle = max(-3.14 / 2, min(headTiltAngle, 3.14 / 2));
+	}	
+
+	camera.setTargetPosition(Vec3(position.x, position.y + EYE_HEIGHT, position.z));
+	camera.setTargetPan(facingDirection);
+	camera.setTargetTilt(headTiltAngle);
 	camera.update(deltaTime);
 }
 

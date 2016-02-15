@@ -16,6 +16,7 @@
 #include "light.h"
 #include "font.h"
 #include "Player.h"
+#include "WindowSizeHandler.h"
 
 // Define an error callback  
 static void error_callback(int error, const char* description)
@@ -26,7 +27,7 @@ static void error_callback(int error, const char* description)
 
 // This function inizializes GLFW and OpenGL and 
 // opens a window and returns a pointer to the window. 
-GLFWwindow* init()
+GLFWwindow* createWindow()
 {
 	//Set the error callback  
 	glfwSetErrorCallback(error_callback);
@@ -52,7 +53,8 @@ GLFWwindow* init()
 	//int window_height = mode->height;
 	//window = glfwCreateWindow(window_width, window_height, "Test Window", glfwGetPrimaryMonitor(), NULL);
 
-	window = glfwCreateWindow(1600, 1000, "Test Window", NULL, NULL);
+	Vec2 size = WindowSizeHandler::getFrameBufferSize();
+	window = glfwCreateWindow(size.x, size.y, "Test Window", NULL, NULL);
 
 	//If the window couldn't be created  
 	if (!window)
@@ -70,6 +72,7 @@ GLFWwindow* init()
 	glfwSetCursorPosCallback(window, UserInput::mouse_pos_callback);
 	glfwSetMouseButtonCallback(window, UserInput::mouse_button_callback);
 	glfwSetScrollCallback(window, UserInput::scroll_callback);
+	glfwSetFramebufferSizeCallback(window, WindowSizeHandler::framebuffer_size_callback);
 
 	//Initialize GLEW    
 	glewExperimental = GL_TRUE;
@@ -88,30 +91,14 @@ GLFWwindow* init()
 	return window;
 }
 
-// close the GLFW-windoe and tenminate GLFW
-void cleanup(GLFWwindow* window)
-{
-	//Close OpenGL window and terminate GLFW  
-	glfwDestroyWindow(window);
-	//Finalize and clean up GLFW  
-	glfwTerminate();
-}
-
 // This is the main function that starts the program. 
 int main(void)
 {
-	GLFWwindow* window = init();			// init GLFW and GLEW
-
-	int windowWidth, windowHeight;
-	glfwGetWindowSize(window, &windowWidth, &windowHeight);
-	cout << "window height: " << windowWidth << "px, window width: " << windowHeight << "px " << endl;
-	
-	UserInput::setCursorLocked(window, true);
-	UserInput::setScreenSize(Vec2(windowWidth, windowHeight)); 
-	
+	GLFWwindow* window = createWindow();			// init GLFW and GLEW
+		
 	Loader loader;
 	Terrain terrain{ loader };
-	Player player{ 0, 0, (float)windowHeight / (float)windowWidth };
+	Player player{ 0, 0 };
 
 	vector<Light> allLights;
 
@@ -134,6 +121,14 @@ int main(void)
 		// ================================== update ==================================
 		player.update(window, delta_time); 
 		
+		if (UserInput::pollKey(window, GLFW_KEY_ESCAPE)) {
+			UserInput::setCursorLocked(window, false); 
+		}
+
+		if (UserInput::getLeftMouseButton()) {
+			UserInput::setCursorLocked(window, true);
+		}
+
 		// ================================== render ==================================
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
@@ -161,8 +156,10 @@ int main(void)
 
 	} while (!glfwWindowShouldClose(window));
 
-	//mainShader.cleanUp();
 	loader.cleanUp();
-	cleanup(window);
+	//Close OpenGL window and terminate GLFW  
+	glfwDestroyWindow(window);
+	//Finalize and clean up GLFW  
+	glfwTerminate();
 	exit(EXIT_SUCCESS);
 }

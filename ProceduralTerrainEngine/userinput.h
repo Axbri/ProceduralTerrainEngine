@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>  
 #include "vec3.h"
 #include "vec2.h"
+#include "WindowSizeHandler.h"
 
 class UserInput
 {
@@ -14,7 +15,7 @@ public:
 		
 	static bool pollKey(GLFWwindow* window, int key);
 	static Vec2 getMousePos();
-	static Vec2 getMouseNormalizedDeviceCoords(int screenWithPixels, int screenHeightPixels);
+	static Vec2 getMouseNormalizedDeviceCoords();
 	static Vec2 getMouseVel();
 	static bool getLeftMouseButton(); 
 	static bool getCenterMouseButton();
@@ -22,7 +23,7 @@ public:
 	static double getMouseDeltaScroll();
 
 	static void setCursorLocked(GLFWwindow* window, bool state);
-	static void setScreenSize(Vec2 size); 
+	static bool isCursorLocked();
 	
 private: 
 	static double mouseX; 
@@ -35,5 +36,4 @@ private:
 	static double deltaScroll;
 
 	static bool cursorLocked; 
-	static Vec2 screenSize;
 };

@@ -10,7 +10,16 @@ Terrain::Terrain(Loader loader)
 	grassTexture = loader.loadBMPtexture("lushgrass.bmp");
 	rockTexture = loader.loadBMPtexture("rock.bmp");
 	sandTexture = loader.loadBMPtexture("sand.bmp");
-	
+
+	TerrainChunk chunk1 = TerrainChunk(loader, 0, 0);
+	TerrainChunk chunk2 = TerrainChunk(loader, 1, 0);
+	TerrainChunk chunk3 = TerrainChunk(loader, 2, 0);
+
+	chunks.push_back(chunk1);
+	chunks.push_back(chunk2);
+	chunks.push_back(chunk3);
+
+	/*
 	for (int x = 0; x < 9; x++)
 	{
 		for (int z = 0; z < 9; z++)
@@ -18,7 +27,7 @@ Terrain::Terrain(Loader loader)
 			TerrainChunk chunk = TerrainChunk(loader, x * TerrainChunk::SIZE - 72, z * TerrainChunk::SIZE - 72);					
 			chunks.push_back(chunk);
 		}
-	}	
+	}	*/
 }
 
 Terrain::~Terrain()

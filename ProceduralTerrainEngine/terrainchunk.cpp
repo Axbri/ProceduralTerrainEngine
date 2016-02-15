@@ -8,14 +8,15 @@ TerrainChunk::TerrainChunk()
 
 }
 
-TerrainChunk::TerrainChunk(Loader loader, double x, double z)
+TerrainChunk::TerrainChunk(Loader loader, int x, int z)
 {
-	xPos = x; 
-	zPos = z; 
+	xIndex = x; 
+	zIndex = z; 
+	xPos = x * SIZE; 
+	zPos = z * SIZE;
 	
 	const int numberOfVertices[] = { NUMBER_OF_VERTICES , NUMBER_OF_VERTICES / 2 + 1, NUMBER_OF_VERTICES / 4 + 1}; 
-
-
+	
 	for (int i{ 0 }; i < 3; i++)
 	{
 		int indices[(NUMBER_OF_VERTICES - 1) * (NUMBER_OF_VERTICES - 1) * 6];
@@ -31,17 +32,16 @@ TerrainChunk::TerrainChunk(Loader loader, double x, double z)
 				float localVertexPosX = (float)(x * SIZE) / (float)(numberOfVertices[i] - 1);
 				float localVertexPosZ = (float)(z * SIZE) / (float)(numberOfVertices[i] - 1);
 				double height = TerrainHeightGenerator::getHeight(xPos + localVertexPosX, zPos + localVertexPosZ);
-				vertexHeights[x][z] = height;
-				positions[positionIndex++] = xPos + localVertexPosX;
-								
-				if (x == 0 || z == 0 || x == numberOfVertices[i]-1 || z == numberOfVertices[i]-1)
+				
+				if (x == 0 || z == 0 || x == numberOfVertices[i] - 1 || z == numberOfVertices[i] - 1)
 				{
 					if (i == 1)
-						height -= 0.1;
+						height -= 0.06;
 					else if (i == 2)
-						height -= 0.5;
-				}								
+						height -= 0.2;
+				}
 
+				positions[positionIndex++] = xPos + localVertexPosX;
 				positions[positionIndex++] = (float)height;
 				positions[positionIndex++] = zPos + localVertexPosZ;
 

@@ -10,7 +10,7 @@ class TerrainChunk
 
 public:
 	TerrainChunk(); 
-	TerrainChunk(Loader loader, double x, double z);
+	TerrainChunk(Loader loader, int x, int z);
 	~TerrainChunk();
 	Model getModel(Camera camera); 
 
@@ -19,9 +19,10 @@ public:
 
 private: 
 	
+	double xIndex;
+	double zIndex;
 	double xPos; 
 	double zPos; 
-	double vertexHeights[NUMBER_OF_VERTICES][NUMBER_OF_VERTICES];		// NUMBER_OF_VERTICES 
 	Model models[3]; 
 };
 
