@@ -7,6 +7,7 @@ class Vec3
 public:
 	Vec3();
 	Vec3(double xValue, double yValue, double zValue);
+	Vec3(int xValue, int yValue, int zValue);
 	Vec3(const Vec3 &other);
 
 	void operator=(const Vec3 &v); 

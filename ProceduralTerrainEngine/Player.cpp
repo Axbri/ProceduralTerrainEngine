@@ -25,7 +25,7 @@ void Player::update(GLFWwindow* window, double deltaTime)
 
 	if (UserInput::pollKey(window, GLFW_KEY_SPACE)) {
 		if (!inAir) {
-			impulseUp(JUMP_SPEED);
+			impulseUp(JUMP_SPEED, deltaTime);
 		}
 	}
 
@@ -53,6 +53,11 @@ Camera Player::getCamera()
 	return camera;
 }
 
+Vec3 Player::getPosition()
+{
+	return position;
+}
+
 void Player::forceForward(double amount)
 {
 	xMomentum -= amount * sin(facingDirection);
@@ -70,9 +75,9 @@ void Player::forceUp(double amount)
 	yMomentum += amount;
 }
 
-void Player::impulseUp(double amount)
+void Player::impulseUp(double amount, double deltaTime)
 {
-	speed.y += amount;
+	speed.y += amount; // *deltaTime;
 	if (amount > 0) {
 		inAir = true;
 	}

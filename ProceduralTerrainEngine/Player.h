@@ -10,13 +10,14 @@ public:
 
 	void update(GLFWwindow* window, double deltaTime);
 	Camera getCamera(); 
+	Vec3 getPosition();
 
 private: 
 
 	void forceForward(double amount);
 	void forceRight(double amount);
 	void forceUp(double amount);
-	void impulseUp(double amount);
+	void impulseUp(double amount, double deltaTime);
 	void doPhysics(double deltaTime); 
 
 	const double MOUSE_ROTATION_SENSITIVITY = 0.015;

@@ -1,8 +1,7 @@
 #include "font.h"
 
-Font::Font(Loader loader, double size, double aspectRatio)
+Font::Font(Loader loader, double size)
 {
-	this->aspectRatio = aspectRatio; 
 	this->fontSize = size;
 	float positions[8] = { -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0, -1.0 };
 	this->vao = loader.create2Dmodel(positions, 8);
@@ -56,6 +55,8 @@ void Font::render(char * name, int number, double xPos, double yPos)
 
 void Font::render(char *str, double xPos, double yPos)
 {
+	double aspectRatio = WindowSizeHandler::getFrameBufferSize().y / WindowSizeHandler::getFrameBufferSize().x;
+
 	Mat4 pos, scale;
 	pos.loadTranslation(xPos, yPos, 0);
 	scale.loadScale(fontSize * aspectRatio, fontSize, 0);

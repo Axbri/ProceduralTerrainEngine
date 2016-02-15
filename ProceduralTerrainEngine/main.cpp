@@ -54,7 +54,7 @@ GLFWwindow* createWindow()
 	//window = glfwCreateWindow(window_width, window_height, "Test Window", glfwGetPrimaryMonitor(), NULL);
 
 	Vec2 size = WindowSizeHandler::getFrameBufferSize();
-	window = glfwCreateWindow(size.x, size.y, "Test Window", NULL, NULL);
+	window = glfwCreateWindow(size.x, size.y, "Procedural Terrain Engine - a demo by Axel Brinkeby", NULL, NULL);
 
 	//If the window couldn't be created  
 	if (!window)
@@ -94,12 +94,12 @@ GLFWwindow* createWindow()
 // This is the main function that starts the program. 
 int main(void)
 {
-	GLFWwindow* window = createWindow();			// init GLFW and GLEW
-		
+	GLFWwindow* window = createWindow();
+
 	Loader loader;
+	Font font{ loader, 0.025 };
 	Terrain terrain{ loader };
 	Player player{ 0, 0 };
-
 	vector<Light> allLights;
 
 	// one light realy far away (without attenuation)
@@ -114,20 +114,24 @@ int main(void)
 	glEnable(GL_DEPTH_TEST);
 
 	// variables used in the main loop 
-	double previus_time = 0, delta_time = 0;
+	double previus_time = 0, delta_time = 0, accumulated_time{ 0 };
+	int framerate{ 0 }, frames_this_second{ 0 };
 
 	do //Main Loop  
 	{
 		// ================================== update ==================================
-		player.update(window, delta_time); 
+		player.update(window, delta_time);
 		
-		if (UserInput::pollKey(window, GLFW_KEY_ESCAPE)) {
+		if (UserInput::pollKey(window, GLFW_KEY_ESCAPE) || UserInput::getRightMouseButton()) {
 			UserInput::setCursorLocked(window, false); 
 		}
 
 		if (UserInput::getLeftMouseButton()) {
 			UserInput::setCursorLocked(window, true);
 		}
+
+		terrain.update(loader, player.getCamera()); 
+		Vec3 chunkindex = terrain.getChunkIndex(player.getCamera().getPosition());
 
 		// ================================== render ==================================
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -139,6 +143,11 @@ int main(void)
 
 		terrain.render(window, player.getCamera(), allLights);
 		
+
+		font.render("number of loaded chunks", terrain.getNumberOfChunksLoaded(), 0.0, 0.86);
+		font.render("you are in chunk", chunkindex, 0.0, 0.92);
+		font.render("Frame rate", framerate, -0.8, 0.92);
+
 		//Swap buffers  
 		glfwSwapBuffers(window);
 		//Get and organize events, like keyboard and mouse input, window resizing, etc...  
@@ -148,11 +157,15 @@ int main(void)
 		// calculate delta time, used for simulating accurate physics and showing framrate
 		delta_time = glfwGetTime() - previus_time;
 		previus_time = glfwGetTime();
-
-		// show framerate in the title of the window
-		std::ostringstream strs;
-		strs << "Framerate: " << (int)(1 / delta_time) << "FPS";
-		glfwSetWindowTitle(window, strs.str().c_str());
+		
+		accumulated_time += delta_time;
+		frames_this_second++;
+		if (accumulated_time > 1)
+		{
+			accumulated_time -= 1;
+			framerate = frames_this_second;
+			frames_this_second = 0;
+		}
 
 	} while (!glfwWindowShouldClose(window));
 

@@ -10,10 +10,8 @@ TerrainChunk::TerrainChunk()
 
 TerrainChunk::TerrainChunk(Loader loader, int x, int z)
 {
-	xIndex = x; 
-	zIndex = z; 
-	xPos = x * SIZE; 
-	zPos = z * SIZE;
+	index = Vec3{ x, 0, z }; 
+	pos = Vec3{ x * SIZE, 0, z * SIZE };
 	
 	const int numberOfVertices[] = { NUMBER_OF_VERTICES , NUMBER_OF_VERTICES / 2 + 1, NUMBER_OF_VERTICES / 4 + 1}; 
 	
@@ -31,7 +29,7 @@ TerrainChunk::TerrainChunk(Loader loader, int x, int z)
 			{
 				float localVertexPosX = (float)(x * SIZE) / (float)(numberOfVertices[i] - 1);
 				float localVertexPosZ = (float)(z * SIZE) / (float)(numberOfVertices[i] - 1);
-				double height = TerrainHeightGenerator::getHeight(xPos + localVertexPosX, zPos + localVertexPosZ);
+				double height = TerrainHeightGenerator::getHeight(pos.x + localVertexPosX, pos.z + localVertexPosZ);
 				
 				if (x == 0 || z == 0 || x == numberOfVertices[i] - 1 || z == numberOfVertices[i] - 1)
 				{
@@ -41,16 +39,16 @@ TerrainChunk::TerrainChunk(Loader loader, int x, int z)
 						height -= 0.2;
 				}
 
-				positions[positionIndex++] = xPos + localVertexPosX;
+				positions[positionIndex++] = pos.x + localVertexPosX;
 				positions[positionIndex++] = (float)height;
-				positions[positionIndex++] = zPos + localVertexPosZ;
+				positions[positionIndex++] = pos.z + localVertexPosZ;
 
 				float texCoordU = (float)(x) / (float)(numberOfVertices[i] - 1);
 				float texCoordV = (float)(z) / (float)(numberOfVertices[i] - 1);
 				textureCoords[textureCoordIndex++] = texCoordU;
 				textureCoords[textureCoordIndex++] = texCoordV;
 
-				Vec3 normal = TerrainHeightGenerator::getNormal(xPos + localVertexPosX, zPos + localVertexPosZ);
+				Vec3 normal = TerrainHeightGenerator::getNormal(pos.x + localVertexPosX, pos.z + localVertexPosZ);
 				normals[normalIndex++] = normal.x;
 				normals[normalIndex++] = normal.y;
 				normals[normalIndex++] = normal.z;
@@ -73,11 +71,8 @@ TerrainChunk::TerrainChunk(Loader loader, int x, int z)
 				indices[indicesIndex++] = bottomRight;
 			}
 		}
-
 		models[i] = loader.createModel(positions, positionIndex, textureCoords, textureCoordIndex, normals, normalIndex, indices, indicesIndex);
-	}
-
-	
+	}	
 }
 
 TerrainChunk::~TerrainChunk()
@@ -87,16 +82,21 @@ TerrainChunk::~TerrainChunk()
 
 Model TerrainChunk::getModel(Camera camera)
 {
-	Vec3 cameraToChunk = camera.getPosition() - Vec3{ xPos + SIZE / 2 , 0, zPos + SIZE / 2 };
-
+	Vec3 cameraToChunk = camera.getPosition() - Vec3{ pos.x + SIZE / 2 , 0.0, pos.z + SIZE / 2 };
 	double distance = cameraToChunk.length(); 
-
 	if (distance < 32)
 		return models[0];
-
 	if (distance < 64)
 		return models[1];
-
 	return models[2];
+}
 
+Vec3 TerrainChunk::getIndex()
+{
+	return index;
+}
+
+Vec3 TerrainChunk::getPosition()
+{
+	return pos;
 }

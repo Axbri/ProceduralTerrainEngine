@@ -14,6 +14,13 @@ Vec3::Vec3(double xValue, double yValue, double zValue)
 	z = zValue;
 }
 
+Vec3::Vec3(int xValue, int yValue, int zValue)
+{
+	x = (double)xValue;
+	y = (double)yValue;
+	z = (double)zValue;
+}
+
 Vec3::Vec3(const Vec3 &other)
 {
 	x = other.x;
