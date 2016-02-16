@@ -97,15 +97,15 @@ int main(void)
 	GLFWwindow* window = createWindow();
 
 	Loader loader;
-	Font font{ loader, 0.025 };
+	Font font{ loader, 0.015 };
 	Terrain terrain{ loader };
 	Player player{ 0, 0 };
 	vector<Light> allLights;
 
 	// one light realy far away (without attenuation)
-	allLights.push_back(Light{ 100, 400, 400 });
+	allLights.push_back(Light{ 100000, 400000, 400000 });
 	allLights[0].color = Vec3(0.8, 0.8, 0.7);
-	allLights.push_back(Light{ 100, 200, -400 });
+	allLights.push_back(Light{ 100000, 200000, -400000 });
 	allLights[1].color = Vec3(0.8, 0.8, 0.7);
 
 	// set the backgorund color and enable depth testing
@@ -130,7 +130,7 @@ int main(void)
 			UserInput::setCursorLocked(window, true);
 		}
 
-		terrain.update(loader, player.getCamera()); 
+		terrain.update(loader, player); 
 		Vec3 chunkindex = terrain.getChunkIndex(player.getCamera().getPosition());
 
 		// ================================== render ==================================
@@ -143,10 +143,15 @@ int main(void)
 
 		terrain.render(window, player.getCamera(), allLights);
 		
+		font.render("Frame rate", framerate, 0.5, 0.95);
 
-		font.render("number of loaded chunks", terrain.getNumberOfChunksLoaded(), 0.0, 0.86);
-		font.render("you are in chunk", chunkindex, 0.0, 0.92);
-		font.render("Frame rate", framerate, -0.8, 0.92);
+		font.render("you are in chunk", chunkindex, -0.95, 0.95);
+		font.render("number of loaded chunks", terrain.getNumberOfChunksLoaded(), -0.95, 0.90);
+		font.render("number of chunks i generation queue", terrain.getQueueSize(), -0.95, 0.85);
+		font.render("player pos", player.getPosition(), -0.95, 0.80);
+		font.render("palyer vel", player.getVelocity(), -0.95, 0.75);
+
+		
 
 		//Swap buffers  
 		glfwSwapBuffers(window);

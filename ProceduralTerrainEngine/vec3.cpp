@@ -16,9 +16,9 @@ Vec3::Vec3(double xValue, double yValue, double zValue)
 
 Vec3::Vec3(int xValue, int yValue, int zValue)
 {
-	x = (double)xValue;
-	y = (double)yValue;
-	z = (double)zValue;
+	x = xValue;
+	y = yValue;
+	z = zValue;
 }
 
 Vec3::Vec3(const Vec3 &other)
@@ -68,6 +68,11 @@ Vec3 Vec3::operator*(const float &c) const
 	return Vec3(x*c, y*c, z*c);
 }
 
+bool Vec3::operator==(const Vec3 & v) const
+{
+	return (x == v.x && y == v.y && z == v.z);
+}
+
 void Vec3::normalize()
 {
 	float length = this->length();
@@ -84,6 +89,11 @@ double Vec3::length()
 double Vec3::lengthSquared()
 {
 	return x * x + y * y + z * z;
+}
+
+double Vec3::manhattanLength()
+{
+	return fabs(x) + fabs(y) + fabs(z);
 }
 
 void Vec3::cross(Vec3 v1, Vec3 v2)

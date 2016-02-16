@@ -28,7 +28,7 @@ public:
 	Vec3 getViewVector(); 
 
 	const double NEAR_CLIP = 0.01;
-	const double FAR_CLIP = 100;
+	const double FAR_CLIP = 200;
 	const double SMOOTH_POSITION_FOLLOW = 30;
 	const double SMOOTH_DIRECTION_FOLLOW = 20;
 	

@@ -5,7 +5,7 @@ Player::Player(double x, double z)
 	position = Vec3{ 0, 0, 0 };
 	facingDirection = headTiltAngle = 0;
 	camera.setAspectRatio(); 
-	xMomentum = zMomentum = yMomentum = 0;
+	momentum = Vec3{ 0, 0, 0 };
 	inAir = false; 
 }
 
@@ -23,11 +23,11 @@ void Player::update(GLFWwindow* window, double deltaTime)
 	if (UserInput::pollKey(window, GLFW_KEY_W))
 		forwardBackward = 1;
 
-	if (UserInput::pollKey(window, GLFW_KEY_SPACE)) {
-		if (!inAir) {
-			impulseUp(JUMP_SPEED, deltaTime);
-		}
-	}
+	//if (UserInput::pollKey(window, GLFW_KEY_SPACE)) {
+	//	if (!inAir) {
+	//		impulseUp(JUMP_SPEED);
+	//	}
+	//}
 
 	double speed = WALKING_SPEED;
 	forceForward(forwardBackward * speed);
@@ -58,26 +58,31 @@ Vec3 Player::getPosition()
 	return position;
 }
 
+Vec3 Player::getVelocity()
+{
+	return velocity;
+}
+
 void Player::forceForward(double amount)
 {
-	xMomentum -= amount * sin(facingDirection);
-	zMomentum -= amount * cos(facingDirection);
+	momentum.x -= amount * sin(facingDirection);
+	momentum.z -= amount * cos(facingDirection);
 }
 
 void Player::forceRight(double amount)
 {
-	xMomentum += amount * cos(facingDirection);
-	zMomentum -= amount * sin(facingDirection);
+	momentum.x += amount * cos(facingDirection);
+	momentum.z -= amount * sin(facingDirection);
 }
 
 void Player::forceUp(double amount)
 {
-	yMomentum += amount;
+	momentum.y += amount;
 }
 
-void Player::impulseUp(double amount, double deltaTime)
+void Player::impulseUp(double amount)
 {
-	speed.y += amount; // *deltaTime;
+	velocity.y += amount;
 	if (amount > 0) {
 		inAir = true;
 	}
@@ -89,22 +94,22 @@ void Player::doPhysics(double deltaTime)
 		friction = AIR_FRICTION;
 	else
 		friction = GROUND_FRICTION;
+	
+	momentum.x *= (1 - friction);
+	momentum.y *= (1 - friction);
+	momentum.z *= (1 - friction);
 
-	xMomentum *= (1 - friction);
-	yMomentum *= (1 - friction);
-	zMomentum *= (1 - friction);
+	velocity.x = momentum.x * deltaTime;
+	velocity.y += GRAVITY * deltaTime;
+	velocity.z = momentum.z * deltaTime;
 
-	speed.x = xMomentum * deltaTime;		
-	speed.y += GRAVITY * deltaTime;	
-	speed.z = zMomentum * deltaTime;
+	position += velocity;
 
-	position += speed;
-
-	float terrainHeight = TerrainHeightGenerator::getHeight(position.x, position.z);
+	float terrainHeight = 10; // TerrainHeightGenerator::getHeight(position.x, position.z);
 
 	if (position.y < terrainHeight + 0.02f) {
 		position.y = terrainHeight;
 		inAir = false;
-		speed.y = 0;
+		velocity.y = 0;
 	}
 }

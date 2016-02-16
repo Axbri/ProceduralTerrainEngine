@@ -10,16 +10,6 @@ Terrain::Terrain(Loader loader)
 	grassTexture = loader.loadBMPtexture("lushgrass.bmp");
 	rockTexture = loader.loadBMPtexture("rock.bmp");
 	sandTexture = loader.loadBMPtexture("sand.bmp");
-
-	TerrainChunk chunk1 = TerrainChunk(loader, -1, 0);
-	TerrainChunk chunk2 = TerrainChunk(loader, -1, -1);
-	TerrainChunk chunk3 = TerrainChunk(loader, 0, 0);
-	TerrainChunk chunk4 = TerrainChunk(loader, 0, -1);
-
-	chunks.push_back(chunk1);
-	chunks.push_back(chunk2);
-	chunks.push_back(chunk3); 
-	chunks.push_back(chunk4);
 }
 
 Terrain::~Terrain()
@@ -27,30 +17,44 @@ Terrain::~Terrain()
 	shader.cleanUp(); 
 }
 
-void Terrain::update(Loader loader, Camera camera)
+void Terrain::update(Loader loader, Player player)
 {
-	Vec3 chunkindex = getChunkIndex(camera.getPosition());
-	bool chunkExists = false; 
-
-	for (int i = 0; i < chunks.size(); i++)
-	{		
-		if (chunks[i].getIndex().x == chunkindex.x && 
-			chunks[i].getIndex().z == chunkindex.z)
+	Vec3 cameraChunkIndex = getChunkIndex(player.getPosition());
+	
+	for (int x{ -LOADING_DISTANCE }; x < LOADING_DISTANCE; x++)
+	{
+		for (int z{ -LOADING_DISTANCE }; z < LOADING_DISTANCE; z++)
 		{
-			chunkExists = true; 
-		}
-
-		if (chunks[i].getIndex().x > chunkindex.x + 1 || chunks[i].getIndex().x < chunkindex.x - 1 ||
-			chunks[i].getIndex().z > chunkindex.z + 1 || chunks[i].getIndex().z < chunkindex.z - 1)
-		{
-			chunks.erase(chunks.begin() + i);
+			Vec3 offset{ x, 0, z }; 
+			if (offset.manhattanLength() < LOADING_DISTANCE)
+			{
+				addToQueue(cameraChunkIndex + offset);
+			}				
 		}
 	}
 
-	if (!chunkExists)
+	// create one new chunk from the chunk creation queue.
+	if (queue.size() != 0)
 	{
-		TerrainChunk newChunk = TerrainChunk(loader, chunkindex.x, chunkindex.z);
-		chunks.push_back(newChunk);
+		Vec3 newChunkIndex = queue.back();
+		queue.pop_back();
+
+		TerrainChunk newChunk = TerrainChunk(newChunkIndex.x, newChunkIndex.z);
+		if (!(find(chunks.begin(), chunks.end(), newChunk) != chunks.end()))
+		{
+			newChunk.load(loader);
+			chunks.push_back(newChunk);
+		}
+	}
+
+	// remove chunks that are to far away
+	for (int i = 0; i < chunks.size(); i++)
+	{
+		double chunkToCameraDistance = (cameraChunkIndex - chunks[i].getIndex()).manhattanLength();				
+		if (chunkToCameraDistance > (LOADING_DISTANCE + 2))
+		{
+			chunks.erase(chunks.begin() + i);
+		}
 	}
 }
 
@@ -102,4 +106,17 @@ Vec3 Terrain::getChunkIndex(Vec3 pos)
 int Terrain::getNumberOfChunksLoaded()
 {
 	return chunks.size();
+}
+
+int Terrain::getQueueSize()
+{
+	return queue.size();
+}
+
+void Terrain::addToQueue(Vec3 pos)
+{
+	if (!(find(queue.begin(), queue.end(), pos) != queue.end()))
+	{
+		queue.insert(queue.begin(), pos);
+	}	
 }

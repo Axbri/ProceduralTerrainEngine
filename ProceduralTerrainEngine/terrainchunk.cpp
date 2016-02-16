@@ -3,18 +3,21 @@
 #include "terrainchunk.h"
 
 
-TerrainChunk::TerrainChunk()
+TerrainChunk::TerrainChunk(int x, int z)
+{
+	index = Vec3{ x, 0, z }; 
+	pos = Vec3{ x * SIZE, 0, z * SIZE };
+}
+
+TerrainChunk::~TerrainChunk()
 {
 
 }
 
-TerrainChunk::TerrainChunk(Loader loader, int x, int z)
+void TerrainChunk::load(Loader loader)
 {
-	index = Vec3{ x, 0, z }; 
-	pos = Vec3{ x * SIZE, 0, z * SIZE };
-	
-	const int numberOfVertices[] = { NUMBER_OF_VERTICES , NUMBER_OF_VERTICES / 2 + 1, NUMBER_OF_VERTICES / 4 + 1}; 
-	
+	const int numberOfVertices[] = { NUMBER_OF_VERTICES , NUMBER_OF_VERTICES / 2 + 1, NUMBER_OF_VERTICES / 4 + 1 };
+
 	for (int i{ 0 }; i < 3; i++)
 	{
 		int indices[(NUMBER_OF_VERTICES - 1) * (NUMBER_OF_VERTICES - 1) * 6];
@@ -30,7 +33,7 @@ TerrainChunk::TerrainChunk(Loader loader, int x, int z)
 				float localVertexPosX = (float)(x * SIZE) / (float)(numberOfVertices[i] - 1);
 				float localVertexPosZ = (float)(z * SIZE) / (float)(numberOfVertices[i] - 1);
 				double height = TerrainHeightGenerator::getHeight(pos.x + localVertexPosX, pos.z + localVertexPosZ);
-				
+
 				if (x == 0 || z == 0 || x == numberOfVertices[i] - 1 || z == numberOfVertices[i] - 1)
 				{
 					if (i == 1)
@@ -72,12 +75,7 @@ TerrainChunk::TerrainChunk(Loader loader, int x, int z)
 			}
 		}
 		models[i] = loader.createModel(positions, positionIndex, textureCoords, textureCoordIndex, normals, normalIndex, indices, indicesIndex);
-	}	
-}
-
-TerrainChunk::~TerrainChunk()
-{
-
+	}
 }
 
 Model TerrainChunk::getModel(Camera camera)
@@ -99,4 +97,9 @@ Vec3 TerrainChunk::getIndex()
 Vec3 TerrainChunk::getPosition()
 {
 	return pos;
+}
+
+bool TerrainChunk::operator==(const TerrainChunk & otherChunk) const
+{
+	return (index == otherChunk.index);
 }
