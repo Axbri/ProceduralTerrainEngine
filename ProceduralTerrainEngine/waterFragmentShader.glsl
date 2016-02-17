@@ -60,7 +60,7 @@ void main(void) {
 		vec3 lightDirection = -unitToLightVector[i]; 	
 		vec3 reflectedLightDirection = reflect(lightDirection, normal); 	
 		float specularFactor = max(dot(unitToCameraVector, reflectedLightDirection), 0.0); 
-		totalSpecular += (lightColor[i] * pow(specularFactor, 120) * clamp(waterDepth, 0.0, 1.0)) / attenuationFactor; 
+		totalSpecular += (lightColor[i] * 2 * pow(specularFactor, 120) * clamp(waterDepth, 0.0, 1.0)) / attenuationFactor; 
 	}
 		
 	vec3 blueWaterColor = vec3(0, 0.2, 0.4); 		

@@ -27,7 +27,7 @@ private:
 	const double GROUND_FRICTION = 0.10;
 	const double WALKING_SPEED = 0.6;		// 0.6
 	const double JUMP_SPEED = 4.025;
-	const double RUNNING_MULTIPLIER = 1.7;
+	const double RUNNING_MULTIPLIER = 3; // 1.7;
 	const double GRAVITY = -0.09;
 
 	Camera camera;

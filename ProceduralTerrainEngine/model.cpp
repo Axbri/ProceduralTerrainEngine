@@ -27,6 +27,14 @@ Model::Model(const int id, const int size, GLuint position_vao, GLuint normal_va
 	modelMatrix.loadIdentity();
 }
 
+Model::Model(const int id, const int size, GLuint position_vao)
+{
+	vao_id = id;
+	vertex_count = size;
+	pos_vbo = position_vao;
+	modelMatrix.loadIdentity();
+}
+
 GLuint Model::get_id()
 {
 	return vao_id;

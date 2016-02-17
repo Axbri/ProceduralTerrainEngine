@@ -30,6 +30,10 @@ void Player::update(GLFWwindow* window, double deltaTime)
 	//}
 
 	double speed = WALKING_SPEED;
+
+	if (UserInput::pollKey(window, GLFW_KEY_LEFT_CONTROL))
+		speed *= RUNNING_MULTIPLIER;
+
 	forceForward(forwardBackward * speed);
 	forceRight(leftRight * speed);
 

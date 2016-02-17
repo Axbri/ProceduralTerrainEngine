@@ -10,6 +10,7 @@ class Model
 		Model();
 		Model(const int id, const int size, GLuint position_vao, GLuint texture_vao, GLuint normal_vao);
 		Model(const int id, const int size, GLuint position_vao, GLuint normal_vao);
+		Model(const int id, const int size, GLuint position_vao);
 
 		GLuint get_id();
 		GLuint get_texture(); 

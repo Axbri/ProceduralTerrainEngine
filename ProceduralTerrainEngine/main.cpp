@@ -18,6 +18,7 @@
 #include "Player.h"
 #include "Water.h"
 #include "WindowSizeHandler.h"
+#include "Skybox.h"
 
 // Define an error callback  
 static void error_callback(int error, const char* description)
@@ -98,6 +99,7 @@ int main(void)
 	GLFWwindow* window = createWindow();
 
 	Loader loader;
+	Skybox sky{ loader };
 	Font font{ loader, 0.015 };
 	Terrain terrain{ loader };
 	Player player{ 0, 0 };
@@ -105,10 +107,11 @@ int main(void)
 	Water water{ loader };
 
 	// one light realy far away (without attenuation)
-	allLights.push_back(Light{ 100000, 400000, 400000 });
-	allLights[0].color = Vec3(0.8, 0.8, 0.7);
-	allLights.push_back(Light{ 100000, 200000, -400000 });
-	allLights[1].color = Vec3(0.8, 0.8, 0.7);
+	allLights.push_back(Light{ 300000, 100000, -300000 });
+	allLights[0].color = Vec3(0.5, 0.5, 0.5);
+
+	allLights.push_back(Light{ 300000, 500000, -300000 });
+	allLights[0].color = Vec3(0.5, 0.5, 0.5);
 
 	// set the backgorund color and enable depth testing
 	glClearColor(0.4f, 0.6f, 0.7f, 0.0f);
@@ -153,6 +156,7 @@ int main(void)
 		tempCamera.invertTilt();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		terrain.render(window, tempCamera, allLights, water.getReflectionClipPlane());
+		sky.render(window, tempCamera); 
 		tempCamera.moveYpos(distance);
 		tempCamera.invertTilt();
 
@@ -160,13 +164,15 @@ int main(void)
 		water.bindRefractionBuffer(); 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		terrain.render(window, player.getCamera(), allLights, water.getRefractionClipPlane());
-		
+		sky.render(window, player.getCamera());
+
 		// render the normal scene
 		FrameBufferUtilities::unbindCurrentBuffer(); 
 		glDisable(GL_CLIP_DISTANCE0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		terrain.render(window, player.getCamera(), allLights, water.getReflectionClipPlane());
 		water.render(window, player.getCamera(), allLights);
+		sky.render(window, player.getCamera());
 
 		// wireframe rendering is of be default. 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

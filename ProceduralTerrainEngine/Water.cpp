@@ -62,7 +62,7 @@ void Water::bindRefractionBuffer()
 void Water::render(GLFWwindow * window, Camera camera, vector<Light> allLights)
 {
 	Mat4 scale, translation;
-	scale.loadScale(150, 1, 150);
+	scale.loadScale(SIZE, 1, SIZE);
 	translation.loadTranslation(camera.getPosition());
 	waterplane.setModelMatrix(scale * translation);
 
