@@ -3,6 +3,7 @@
 #include <GL/glew.h> 
 #include <math.h>
 #include "vec4.h"
+#include "vec3.h"
 
 class Mat4
 {
@@ -18,6 +19,7 @@ public:
 	void loadRotationZ(double angle);
 	void loadScale(double sx, double sy, double sz); 
 	void loadTranslation(double dx, double dy, double dz);
+	void loadTranslation(Vec3 pos);
 	void loadPerspectiveProjection(double aspectRatio, double fov, double near, double far);
 
 	Mat4 inverse() const; 

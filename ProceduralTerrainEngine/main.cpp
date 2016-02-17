@@ -16,6 +16,7 @@
 #include "light.h"
 #include "font.h"
 #include "Player.h"
+#include "Water.h"
 #include "WindowSizeHandler.h"
 
 // Define an error callback  
@@ -101,6 +102,7 @@ int main(void)
 	Terrain terrain{ loader };
 	Player player{ 0, 0 };
 	vector<Light> allLights;
+	Water water{ loader };
 
 	// one light realy far away (without attenuation)
 	allLights.push_back(Light{ 100000, 400000, 400000 });
@@ -112,6 +114,8 @@ int main(void)
 	glClearColor(0.4f, 0.6f, 0.7f, 0.0f);
 	glDepthFunc(GL_LESS);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
 
 	// variables used in the main loop 
 	double previus_time = 0, delta_time = 0, accumulated_time{ 0 };
@@ -134,24 +138,46 @@ int main(void)
 		Vec3 chunkindex = terrain.getChunkIndex(player.getCamera().getPosition());
 
 		// ================================== render ==================================
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		if (UserInput::getCenterMouseButton())
+		
+		// enable wireframe rendering if the user hold down the W key on the keyboard 
+		if (UserInput::pollKey(window, GLFW_KEY_Q))
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		else
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-		terrain.render(window, player.getCamera(), allLights);
 		
-		font.render("Frame rate", framerate, 0.5, 0.95);
+		// render reflection texture
+		glEnable(GL_CLIP_DISTANCE0);
+		water.bindReflectionBuffer(); 
+		Camera tempCamera = player.getCamera(); 
+		double distance = 2 * (tempCamera.getPosition().y - 0);
+		tempCamera.moveYpos(-distance);
+		tempCamera.invertTilt();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		terrain.render(window, tempCamera, allLights, water.getReflectionClipPlane());
+		tempCamera.moveYpos(distance);
+		tempCamera.invertTilt();
 
+		// render refraction texture
+		water.bindRefractionBuffer(); 
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		terrain.render(window, player.getCamera(), allLights, water.getRefractionClipPlane());
+		
+		// render the normal scene
+		FrameBufferUtilities::unbindCurrentBuffer(); 
+		glDisable(GL_CLIP_DISTANCE0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		terrain.render(window, player.getCamera(), allLights, water.getReflectionClipPlane());
+		water.render(window, player.getCamera(), allLights);
+
+		// wireframe rendering is of be default. 
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+		// render all the text: 
+		font.render("Frame rate", framerate, 0.5, 0.95);
 		font.render("you are in chunk", chunkindex, -0.95, 0.95);
 		font.render("number of loaded chunks", terrain.getNumberOfChunksLoaded(), -0.95, 0.90);
 		font.render("number of chunks i generation queue", terrain.getQueueSize(), -0.95, 0.85);
 		font.render("player pos", player.getPosition(), -0.95, 0.80);
 		font.render("palyer vel", player.getVelocity(), -0.95, 0.75);
-
-		
 
 		//Swap buffers  
 		glfwSwapBuffers(window);
@@ -174,6 +200,8 @@ int main(void)
 
 	} while (!glfwWindowShouldClose(window));
 
+	water.cleanUp(); 
+	//terrain.cleanUp(); 
 	loader.cleanUp();
 	//Close OpenGL window and terminate GLFW  
 	glfwDestroyWindow(window);

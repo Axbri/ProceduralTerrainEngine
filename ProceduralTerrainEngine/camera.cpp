@@ -77,6 +77,18 @@ void Camera::setTargetTilt(double angle)
 	this->targetTiltAngle = angle;
 }
 
+void Camera::moveYpos(double distance)
+{
+	this->position.y += distance;
+	updateViewMatrix();
+}
+
+void Camera::invertTilt()
+{
+	this->tiltAngle = -tiltAngle;
+	updateViewMatrix();
+}
+
 Mat4 Camera::getViewMatrix()
 {
 	return viewMatrix; 

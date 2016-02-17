@@ -15,15 +15,17 @@ public:
 	~Terrain();
 
 	void update(Loader loader, Player player);
-	void render(GLFWwindow* window, Camera camera, vector<Light> allLights);
+	void render(GLFWwindow* window, Camera camera, vector<Light> allLights, Vec4 clipPlane);
 	
 	Vec3 getChunkIndex(Vec3 pos); 
 	int getNumberOfChunksLoaded(); 
 	int getQueueSize(); 
 
-	const int LOADING_DISTANCE = 10; 
+	const int LOADING_DISTANCE = 4; 
 
 private: 
+
+	void removeFarawayChunks();
 
 	void addToQueue(Vec3 pos);
 

@@ -23,21 +23,21 @@ void main (void)
 {
 	vec3 normal = normalize(interpolatedNormal); 	
 
-	vec4 grassColor = texture(grassTexture, interpolatedTextureCoords * 16);
-	vec4 rockColor = texture(rockTexture, interpolatedTextureCoords * 8);
-	vec4 sandColor = texture(sandTexture, interpolatedTextureCoords * 8);
+	vec4 grassColor = texture(grassTexture, interpolatedTextureCoords * 32);
+	vec4 rockColor = texture(rockTexture, interpolatedTextureCoords * 16);
+	vec4 sandColor = texture(sandTexture, interpolatedTextureCoords * 16);
 	
 	float normalAngle = clamp(length(vec2(normal.x, normal.z)), 0, 1); 
 	
-	float sandMixFactor = normalAngle/8 + clamp(1-interpolatedWorldPos.y, 0, 1); 	
+	float sandMixFactor = normalAngle/8 + clamp(1-interpolatedWorldPos.y/2, 0, 1); 	
 	
 	vec4 textureColor = mix(grassColor, sandColor, smoothstep(0.4, 0.9, sandMixFactor)); 
 	
-	float rockMixFactor = smoothstep(0.2, 0.5, normalAngle); 		
+	float rockMixFactor = smoothstep(0.15, 0.35, normalAngle); 		
 	textureColor = mix(textureColor, rockColor, rockMixFactor); 
 						
-	if(interpolatedWorldPos.y < 0)
-		textureColor = vec4(0.4, 0.5, 0.9, 1.0);
+	//if(interpolatedWorldPos.y < 0)
+	//	textureColor = vec4(0.4, 0.5, 0.9, 1.0);
 			
 	vec3 unitToCameraVector = normalize(toCameraVector);	
 	vec3 totalDiffuse = vec3(0.0); 

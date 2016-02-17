@@ -76,6 +76,11 @@ void Mat4::loadTranslation(double dx, double dy, double dz)
 	M[11] = dz;
 }
 
+void Mat4::loadTranslation(Vec3 pos)
+{
+	loadTranslation(pos.x, pos.y, pos.z); 
+}
+
 void Mat4::loadPerspectiveProjection(double aspectRatio, double fov, double near, double far)
 {
 	this->loadIdentity();

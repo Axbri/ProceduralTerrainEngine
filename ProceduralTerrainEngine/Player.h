@@ -25,7 +25,7 @@ private:
 	const double EYE_HEIGHT = 1.3;
 	const double AIR_FRICTION = 0.15;
 	const double GROUND_FRICTION = 0.10;
-	const double WALKING_SPEED = 3.6;		// 0.6
+	const double WALKING_SPEED = 0.6;		// 0.6
 	const double JUMP_SPEED = 4.025;
 	const double RUNNING_MULTIPLIER = 1.7;
 	const double GRAVITY = -0.09;

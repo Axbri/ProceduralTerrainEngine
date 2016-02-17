@@ -37,9 +37,9 @@ void TerrainChunk::load(Loader loader)
 				if (x == 0 || z == 0 || x == numberOfVertices[i] - 1 || z == numberOfVertices[i] - 1)
 				{
 					if (i == 1)
-						height -= 0.06;
+						height -= 0.15;
 					else if (i == 2)
-						height -= 0.2;
+						height -= 0.30;
 				}
 
 				positions[positionIndex++] = pos.x + localVertexPosX;
@@ -82,9 +82,9 @@ Model TerrainChunk::getModel(Camera camera)
 {
 	Vec3 cameraToChunk = camera.getPosition() - Vec3{ pos.x + SIZE / 2 , 0.0, pos.z + SIZE / 2 };
 	double distance = cameraToChunk.length(); 
-	if (distance < 32)
+	if (distance < SIZE)
 		return models[0];
-	if (distance < 64)
+	if (distance < SIZE*2)
 		return models[1];
 	return models[2];
 }

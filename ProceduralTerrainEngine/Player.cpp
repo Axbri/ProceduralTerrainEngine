@@ -105,7 +105,7 @@ void Player::doPhysics(double deltaTime)
 
 	position += velocity;
 
-	float terrainHeight = 10; // TerrainHeightGenerator::getHeight(position.x, position.z);
+	float terrainHeight = TerrainHeightGenerator::getHeight(position.x, position.z);
 
 	if (position.y < terrainHeight + 0.02f) {
 		position.y = terrainHeight;

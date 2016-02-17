@@ -22,6 +22,8 @@ public:
 	void setTilt(double angle);
 	void setTargetPan(double angle);
 	void setTargetTilt(double angle);
+	void moveYpos(double distance); 
+	void invertTilt(); 
 	Mat4 getViewMatrix();
 	Mat4 getProjectionMatrix();
 	Vec3 getPosition(); 

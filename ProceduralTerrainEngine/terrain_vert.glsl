@@ -14,6 +14,7 @@ uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
 uniform vec3 lightPosition[8];
+uniform vec4 clipPlane; 
 
 void main (void) 
 {
@@ -22,6 +23,8 @@ void main (void)
 		
 	interpolatedTextureCoords = textureCoords; 
 	interpolatedWorldPos = worldPosition.xyz; 
+	
+	gl_ClipDistance[0] = dot(worldPosition, clipPlane);	
 	
 	interpolatedNormal = mat3(modelMatrix) * normal;  	
 	

@@ -14,6 +14,15 @@ Model Loader::createModel(float positions[], int size_pos, float textureCoords[]
 	return Model(vao, size_index, pos_vbo, tex_vbo, norm_vbo);
 }
 
+Model Loader::createModel(float positions[], int size_pos, int indices[], int size_index)
+{
+	GLuint vao = createVao();
+	bindIndicesBuffer(indices, size_index);
+	GLuint pos_vbo = storeDataInAtributeList(0, 3, positions, size_pos);
+	glBindVertexArray(0);
+	return Model(vao, size_index, pos_vbo, 0, 0);
+}
+
 Model Loader::createTexturelessModel(float positions[], int size_pos, float normals[], int size_normals, int indices[], int size_index)
 {
 	GLuint vao = createVao();

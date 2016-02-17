@@ -70,7 +70,7 @@ Vec3 Vec3::operator*(const float &c) const
 
 bool Vec3::operator==(const Vec3 & v) const
 {
-	return (x == v.x && y == v.y && z == v.z);
+	return (fabs(x - v.x) + fabs(y - v.y) + fabs(z - v.z) < 0.01);
 }
 
 void Vec3::normalize()

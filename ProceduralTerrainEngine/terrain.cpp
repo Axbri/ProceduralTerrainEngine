@@ -20,18 +20,20 @@ Terrain::~Terrain()
 void Terrain::update(Loader loader, Player player)
 {
 	Vec3 cameraChunkIndex = getChunkIndex(player.getPosition());
-	
-	for (int x{ -LOADING_DISTANCE }; x < LOADING_DISTANCE; x++)
-	{
-		for (int z{ -LOADING_DISTANCE }; z < LOADING_DISTANCE; z++)
+	//if (player.getVelocity().manhattanLength() > 0.01)
+	//{
+		for (int x{ -LOADING_DISTANCE }; x < LOADING_DISTANCE; x++)
 		{
-			Vec3 offset{ x, 0, z }; 
-			if (offset.manhattanLength() < LOADING_DISTANCE)
+			for (int z{ -LOADING_DISTANCE }; z < LOADING_DISTANCE; z++)
 			{
-				addToQueue(cameraChunkIndex + offset);
-			}				
+				Vec3 offset{ x, 0, z };
+				if (offset.manhattanLength() < LOADING_DISTANCE)
+				{
+					addToQueue(cameraChunkIndex + offset);
+				}
+			}
 		}
-	}
+	//}
 
 	// create one new chunk from the chunk creation queue.
 	if (queue.size() != 0)
@@ -48,31 +50,32 @@ void Terrain::update(Loader loader, Player player)
 	}
 
 	// remove chunks that are to far away
-	for (int i = 0; i < chunks.size(); i++)
+	for (int i{ 0 }; i < chunks.size(); i++)
 	{
 		double chunkToCameraDistance = (cameraChunkIndex - chunks[i].getIndex()).manhattanLength();				
 		if (chunkToCameraDistance > (LOADING_DISTANCE + 2))
 		{
 			chunks.erase(chunks.begin() + i);
+			//break; 
 		}
 	}
 }
 
-void Terrain::render(GLFWwindow* window, Camera camera, vector<Light> allLights)
+void Terrain::render(GLFWwindow* window, Camera camera, vector<Light> allLights, Vec4 clipPlane)
 {
 	shader.start();
+	shader.setUniformVec4("clipPlane", clipPlane);
 	shader.setUniformMat4("projectionMatrix", camera.getProjectionMatrix());
 	shader.setUniformMat4("viewMatrix", camera.getViewMatrix());
 	Light::loadLightsToShader(shader, allLights); 
 	shader.setUniformInt("grassTexture", 0);
 	shader.setUniformInt("rockTexture", 1);
 	shader.setUniformInt("sandTexture", 2);
-	
-	for (int i = 0; i < chunks.size(); i++)
+	for (auto chunk : chunks)
 	{
-		Model chunkModel = chunks[i].getModel(camera);
+		Model chunkModel = chunk.getModel(camera);
 		shader.setUniformMat4("modelMatrix", chunkModel.getModelMatrix());
-		
+
 		glBindVertexArray(chunkModel.get_id());
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
@@ -111,6 +114,11 @@ int Terrain::getNumberOfChunksLoaded()
 int Terrain::getQueueSize()
 {
 	return queue.size();
+}
+
+void Terrain::removeFarawayChunks()
+{
+
 }
 
 void Terrain::addToQueue(Vec3 pos)
