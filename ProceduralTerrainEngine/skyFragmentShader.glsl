@@ -13,11 +13,10 @@ uniform float upperLimit;
 void main (){	
 	vec3 texture1Color = texture(cubeMap1, interpolatedTextureCoordinates).rgb; 
 	
-	//float mixAmount = clamp((interpolatedTextureCoordinates.y - lowerLimit) / (upperLimit - lowerLimit), 0.0, 1.0);		
+	float mixAmount = clamp((interpolatedTextureCoordinates.y - lowerLimit) / (upperLimit - lowerLimit), 0.0, 1.0);		
 	
-	//vec3 finalColor = mix(fogColor, texture1Color, mixAmount);  
+	vec3 finalColor = mix(texture1Color, fogColor, mixAmount);  
 	
-	//pixelColor = vec4(pow(finalColor, vec3(1.0 / gamma)), 1.0);
-	pixelColor = vec4(texture1Color, 1.0); 
+	pixelColor = vec4(pow(finalColor, vec3(1.0 / gamma)), 1.0);
 }
 

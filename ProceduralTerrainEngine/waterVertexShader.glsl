@@ -23,7 +23,7 @@ void main(void) {
 	clipSpace = transformedPos; 	
 		
 	toCameraVector = vec3(inverse(viewMatrix) * vec4(0.0, 0.0, 0.0, 1.0)) - vec3(worldPosition); 	
-	textureCoords = vec2(worldPosition.x, worldPosition.z) / 300;
+	textureCoords = vec2(worldPosition.x, worldPosition.z) / 16;
 	
 	for (int i = 0; i < 8; i++) {
 		toLightVector[i] = lightPosition[i] - vec3(worldPosition); 

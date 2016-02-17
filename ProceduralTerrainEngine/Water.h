@@ -29,7 +29,7 @@ public:
 private: 
 
 
-	const int SIZE = 200;
+	const int SIZE = 300;
 	const int REFLECTION_WIDTH = 1280;
 	const int REFLECTION_HEIGHT = 720;
 	const int REFRACTION_WIDTH = 1280;

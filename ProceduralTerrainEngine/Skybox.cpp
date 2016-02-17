@@ -4,7 +4,7 @@
 
 Skybox::Skybox(Loader loader)
 {
-	float SIZE = 200;
+	float SIZE = 500;
 	float VERTICES[] = { 
 		-SIZE, SIZE, -SIZE, -SIZE, -SIZE, -SIZE, SIZE, -SIZE, -SIZE, 
 		SIZE, -SIZE, -SIZE,	SIZE, SIZE, -SIZE, -SIZE, SIZE, -SIZE,
@@ -60,9 +60,9 @@ void Skybox::render(GLFWwindow * window, Camera camera)
 
 	shader.setUniformInt("cubeMap1", 0);
 	shader.setUniformFloat("gamma", 1.0);
-	shader.setUniformVec3("fogColor", 0.5, 0.5, 0.9); 
-	shader.setUniformFloat("lowerLimit", 10.0);
-	shader.setUniformFloat("upperLimit", 40.0);
+	shader.setUniformVec3("fogColor", 0.45, 0.60, 0.70); 
+	shader.setUniformFloat("lowerLimit", -80.0);
+	shader.setUniformFloat("upperLimit", 5.0);
 
 	glBindVertexArray(model);
 	glEnableVertexAttribArray(0);

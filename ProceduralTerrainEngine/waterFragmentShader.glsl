@@ -17,8 +17,8 @@ uniform vec3 lightColor[8];
 uniform vec3 lightAttenuation[8];
 
 const float amountOfRipple = 0.1; 
-const int duduScale = 50;
-const int normalScale = 50;
+const int duduScale = 1;
+const int normalScale = 1;
 const float normalTimeScale = 0.5;
 
 void main(void) {
