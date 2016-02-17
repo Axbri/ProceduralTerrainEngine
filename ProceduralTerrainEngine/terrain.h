@@ -21,12 +21,10 @@ public:
 	int getNumberOfChunksLoaded(); 
 	int getQueueSize(); 
 
-	const int LOADING_DISTANCE = 4; 
+	const int LOADING_DISTANCE = 8; 
 
 private: 
-
-	void removeFarawayChunks();
-
+	
 	void addToQueue(Vec3 pos);
 
 	vector<Vec3> queue;

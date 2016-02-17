@@ -10,6 +10,18 @@ Terrain::Terrain(Loader loader)
 	grassTexture = loader.loadBMPtexture("lushgrass.bmp");
 	rockTexture = loader.loadBMPtexture("rock.bmp");
 	sandTexture = loader.loadBMPtexture("sand.bmp");
+
+	for (int x{ -LOADING_DISTANCE }; x < LOADING_DISTANCE; x++)
+	{
+		for (int z{ -LOADING_DISTANCE }; z < LOADING_DISTANCE; z++)
+		{
+			Vec3 offset{ x, 0, z };
+			if (offset.lengthSquared() < LOADING_DISTANCE*LOADING_DISTANCE)
+			{
+				addToQueue(offset);
+			}
+		}
+	}
 }
 
 Terrain::~Terrain()
@@ -20,20 +32,20 @@ Terrain::~Terrain()
 void Terrain::update(Loader loader, Player player)
 {
 	Vec3 cameraChunkIndex = getChunkIndex(player.getPosition());
-	//if (player.getVelocity().manhattanLength() > 0.01)
-	//{
+	if (player.getVelocity().manhattanLength() > 0.01)
+	{
 		for (int x{ -LOADING_DISTANCE }; x < LOADING_DISTANCE; x++)
 		{
 			for (int z{ -LOADING_DISTANCE }; z < LOADING_DISTANCE; z++)
 			{
 				Vec3 offset{ x, 0, z };
-				if (offset.manhattanLength() < LOADING_DISTANCE)
+				if (offset.lengthSquared() < LOADING_DISTANCE*LOADING_DISTANCE)
 				{
 					addToQueue(cameraChunkIndex + offset);
 				}
 			}
 		}
-	//}
+	}
 
 	// create one new chunk from the chunk creation queue.
 	if (queue.size() != 0)
@@ -52,8 +64,8 @@ void Terrain::update(Loader loader, Player player)
 	// remove chunks that are to far away
 	for (int i{ 0 }; i < chunks.size(); i++)
 	{
-		double chunkToCameraDistance = (cameraChunkIndex - chunks[i].getIndex()).manhattanLength();				
-		if (chunkToCameraDistance > (LOADING_DISTANCE + 2))
+		double chunkToCameraDistance = (cameraChunkIndex - chunks[i].getIndex()).lengthSquared();				
+		if (chunkToCameraDistance > (LOADING_DISTANCE*LOADING_DISTANCE+4))
 		{
 			chunks.erase(chunks.begin() + i);
 			//break; 
@@ -101,9 +113,7 @@ void Terrain::render(GLFWwindow* window, Camera camera, vector<Light> allLights,
 
 Vec3 Terrain::getChunkIndex(Vec3 pos)
 {
-	int xIndex = floor(pos.x / TerrainChunk::SIZE);
-	int zIndex = floor(pos.z / TerrainChunk::SIZE);
-	return Vec3(xIndex, 0, zIndex);
+	return Vec3(floor(pos.x / TerrainChunk::SIZE), 0.0, floor(pos.z / TerrainChunk::SIZE));
 }
 
 int Terrain::getNumberOfChunksLoaded()
@@ -114,11 +124,6 @@ int Terrain::getNumberOfChunksLoaded()
 int Terrain::getQueueSize()
 {
 	return queue.size();
-}
-
-void Terrain::removeFarawayChunks()
-{
-
 }
 
 void Terrain::addToQueue(Vec3 pos)

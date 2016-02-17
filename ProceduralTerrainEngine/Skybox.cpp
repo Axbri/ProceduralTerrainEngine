@@ -51,7 +51,7 @@ void Skybox::render(GLFWwindow * window, Camera camera)
 {
 	modelMatrix.loadTranslation(camera.getPosition());
 
-	//glEnable(GL_CULL_FACE);
+	glDisable(GL_CULL_FACE);
 
 	shader.start(); 
 	shader.setUniformMat4("projectionMatrix", camera.getProjectionMatrix());
@@ -70,13 +70,15 @@ void Skybox::render(GLFWwindow * window, Camera camera)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
 
-	glDrawArrays(GL_TRIANGLES, 0, 4 * 9);
+	glDrawArrays(GL_TRIANGLES, 0, 4 * 9);	// varför 4*9 ??
 
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
 	glDisableVertexAttribArray(0);
 	glBindVertexArray(0);
 	shader.stop();
+
+	glEnable(GL_CULL_FACE);
 }
 
 void Skybox::cleanUp()

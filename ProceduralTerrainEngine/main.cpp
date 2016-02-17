@@ -117,8 +117,11 @@ int main(void)
 	glClearColor(0.4f, 0.6f, 0.7f, 0.0f);
 	glDepthFunc(GL_LESS);
 	glEnable(GL_DEPTH_TEST);
+
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_FRONT);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	// variables used in the main loop 
 	double previus_time = 0, delta_time = 0, accumulated_time{ 0 };
@@ -129,7 +132,12 @@ int main(void)
 		// ================================== update ==================================
 		player.update(window, delta_time);
 		
-		if (UserInput::pollKey(window, GLFW_KEY_ESCAPE) || UserInput::getRightMouseButton()) {
+		if (UserInput::pollKey(window, GLFW_KEY_ESCAPE))
+		{
+			glfwSetWindowShouldClose(window, GL_TRUE);
+		}
+
+		if (UserInput::getRightMouseButton()) {
 			UserInput::setCursorLocked(window, false); 
 		}
 
@@ -146,19 +154,19 @@ int main(void)
 		// enable wireframe rendering if the user hold down the W key on the keyboard 
 		if (UserInput::pollKey(window, GLFW_KEY_Q))
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+		glEnable(GL_CULL_FACE);
 		
+
 		// render reflection texture
 		glEnable(GL_CLIP_DISTANCE0);
 		water.bindReflectionBuffer(); 
 		Camera tempCamera = player.getCamera(); 
-		double distance = 2 * (tempCamera.getPosition().y - 0);
-		tempCamera.moveYpos(-distance);
+		tempCamera.moveYpos(-2 * tempCamera.getPosition().y);
 		tempCamera.invertTilt();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		terrain.render(window, tempCamera, allLights, water.getReflectionClipPlane());
 		sky.render(window, tempCamera); 
-		tempCamera.moveYpos(distance);
-		tempCamera.invertTilt();
 
 		// render refraction texture
 		water.bindRefractionBuffer(); 
@@ -175,7 +183,7 @@ int main(void)
 		sky.render(window, player.getCamera());
 
 		// wireframe rendering is of be default. 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		// render all the text: 
 		font.render("Frame rate", framerate, 0.5, 0.95);
