@@ -4,6 +4,7 @@ layout (location = 0) in vec3 position;
 layout (location = 1) in vec2 textureCoords; 
 layout (location = 2) in vec3 normal; 
 
+out vec3 interpolatedCameraSpacePos; 
 out vec3 interpolatedWorldPos; 
 out vec2 interpolatedTextureCoords; 
 out vec3 interpolatedNormal;
@@ -19,12 +20,16 @@ uniform vec4 clipPlane;
 void main (void) 
 {
 	vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-	gl_Position = projectionMatrix * viewMatrix * worldPosition;	
-		
-	interpolatedTextureCoords = textureCoords; 
-	interpolatedWorldPos = worldPosition.xyz; 
-	
 	gl_ClipDistance[0] = dot(worldPosition, clipPlane);	
+	
+	vec4 cameraSpacePos = projectionMatrix * viewMatrix * worldPosition;	
+	gl_Position = cameraSpacePos; 
+	interpolatedCameraSpacePos = cameraSpacePos.xyz;  
+	interpolatedWorldPos = worldPosition.xyz; 	
+	interpolatedTextureCoords = textureCoords; 
+	
+	
+	
 	
 	interpolatedNormal = mat3(modelMatrix) * normal;  	
 	

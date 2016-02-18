@@ -7,6 +7,7 @@
 #include "light.h"
 #include "player.h"
 #include "vec2.h"
+#include "Settings.h"
 
 class Terrain
 {
@@ -15,7 +16,7 @@ public:
 	~Terrain();
 
 	void update(Loader loader, Player player);
-	void render(GLFWwindow* window, Camera camera, vector<Light> allLights, Vec4 clipPlane);
+	void render(GLFWwindow* window, Settings settings, Camera camera, vector<Light> allLights, Vec4 clipPlane);
 	
 	Vec3 getChunkIndex(Vec3 pos); 
 	int getNumberOfChunksLoaded(); 

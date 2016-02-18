@@ -47,7 +47,7 @@ Skybox::~Skybox()
 	cleanUp(); 
 }
 
-void Skybox::render(GLFWwindow * window, Camera camera)
+void Skybox::render(GLFWwindow * window, Settings settings, Camera camera)
 {
 	modelMatrix.loadTranslation(camera.getPosition());
 
@@ -59,8 +59,8 @@ void Skybox::render(GLFWwindow * window, Camera camera)
 	shader.setUniformMat4("modelMatrix", modelMatrix);
 
 	shader.setUniformInt("cubeMap1", 0);
-	shader.setUniformFloat("gamma", 1.0);
-	shader.setUniformVec3("fogColor", 0.45, 0.60, 0.70); 
+	shader.setUniformFloat("gamma", settings.getGamma());
+	shader.setUniformVec3("fogColor", settings.getFogColor());
 	shader.setUniformFloat("lowerLimit", -80.0);
 	shader.setUniformFloat("upperLimit", 5.0);
 

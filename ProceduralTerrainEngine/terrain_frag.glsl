@@ -1,5 +1,6 @@
 #version 330 core
 
+in vec3 interpolatedCameraSpacePos; 
 in vec3 interpolatedWorldPos; 
 in vec2 interpolatedTextureCoords; 
 in vec3 interpolatedNormal;
@@ -14,6 +15,9 @@ uniform sampler2D sandTexture;
 
 uniform vec3 lightColor[8]; 
 uniform vec3 lightAttenuation[8];
+uniform vec3 fogColor;
+uniform float fogDencity; 
+uniform float gamma;
 
 const float shineDampener = 0.0; 
 const float reflectance = 0.0; 
@@ -56,17 +60,16 @@ void main (void)
 		totalSpecular = totalSpecular + (pow(specularFactor, shineDampener) * lightColor[i] * clamp(reflectance, 0.0, 1.0)) / attenuationFactor; 
 	}
 		
-	
-		
 	totalDiffuse = max(totalDiffuse, ambient); 	// ambient light
 	totalDiffuse = min(totalDiffuse, 1.0);
 	totalSpecular = min(totalSpecular, 1.0);
 	
-	
-	
 	vec3 materialAndLighting = textureColor.xyz * totalDiffuse + totalSpecular; 
+	//pixel_color = vec4(materialAndLighting, 1.0);	
 	
-	
-	
-	pixel_color = vec4(materialAndLighting, 1.0);
+	float toFragmentDistance = length(interpolatedCameraSpacePos);     	
+	float fogMultiplier = clamp(-0.2 + toFragmentDistance * fogDencity, 0.0, 1.0); 
+
+	vec3 finalColor = mix(materialAndLighting, fogColor, fogMultiplier);		
+	pixel_color = vec4(pow(materialAndLighting, vec3(1.0 / gamma)), smoothstep(0.0, 0.2, 1-fogMultiplier));	
 }

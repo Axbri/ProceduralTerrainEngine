@@ -19,6 +19,7 @@
 #include "Water.h"
 #include "WindowSizeHandler.h"
 #include "Skybox.h"
+#include "Settings.h"
 
 // Define an error callback  
 static void error_callback(int error, const char* description)
@@ -105,6 +106,7 @@ int main(void)
 	Player player{ 0, 0 };
 	vector<Light> allLights;
 	Water water{ loader };
+	Settings settings; 
 
 	// one light realy far away (without attenuation)
 	allLights.push_back(Light{ 300000, 100000, -300000 });
@@ -114,7 +116,7 @@ int main(void)
 	allLights[0].color = Vec3(0.5, 0.5, 0.5);
 
 	// set the backgorund color and enable depth testing
-	glClearColor(0.4f, 0.6f, 0.7f, 0.0f);
+	glClearColor(settings.getFogColor().x, settings.getFogColor().y, settings.getFogColor().z, 0.0f);
 	glDepthFunc(GL_LESS);
 	glEnable(GL_DEPTH_TEST);
 
@@ -165,33 +167,38 @@ int main(void)
 		tempCamera.moveYpos(-2 * tempCamera.getPosition().y);
 		tempCamera.invertTilt();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		terrain.render(window, tempCamera, allLights, water.getReflectionClipPlane());
-		sky.render(window, tempCamera); 
+		sky.render(window, settings, tempCamera);
+		terrain.render(window, settings, tempCamera, allLights, water.getReflectionClipPlane());
+		
 
 		// render refraction texture
 		water.bindRefractionBuffer(); 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		terrain.render(window, player.getCamera(), allLights, water.getRefractionClipPlane());
-		sky.render(window, player.getCamera());
+		sky.render(window, settings, player.getCamera());
+		terrain.render(window, settings, player.getCamera(), allLights, water.getRefractionClipPlane());
+		
 
 		// render the normal scene
 		FrameBufferUtilities::unbindCurrentBuffer(); 
 		glDisable(GL_CLIP_DISTANCE0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		terrain.render(window, player.getCamera(), allLights, water.getReflectionClipPlane());
+		sky.render(window, settings, player.getCamera());
+		
+		terrain.render(window, settings, player.getCamera(), allLights, water.getReflectionClipPlane());
 		water.render(window, player.getCamera(), allLights);
-		sky.render(window, player.getCamera());
+		
 
 		// wireframe rendering is of be default. 
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		// render all the text: 
-		font.render("Frame rate", framerate, 0.5, 0.95);
-		font.render("you are in chunk", chunkindex, -0.95, 0.95);
-		font.render("number of loaded chunks", terrain.getNumberOfChunksLoaded(), -0.95, 0.90);
-		font.render("number of chunks i generation queue", terrain.getQueueSize(), -0.95, 0.85);
-		font.render("player pos", player.getPosition(), -0.95, 0.80);
-		font.render("palyer vel", player.getVelocity(), -0.95, 0.75);
+		font.setColor(0, 0, 0); 
+		font.render("Frame rate", framerate, 0.75, 0.98);
+		//font.render("you are in chunk", chunkindex, -0.95, 0.95);
+		//font.render("number of loaded chunks", terrain.getNumberOfChunksLoaded(), -0.95, 0.90);
+		//font.render("number of chunks i generation queue", terrain.getQueueSize(), -0.95, 0.85);
+		//font.render("player pos", player.getPosition(), -0.95, 0.80);
+		//font.render("palyer vel", player.getVelocity(), -0.95, 0.75);
 
 		//Swap buffers  
 		glfwSwapBuffers(window);

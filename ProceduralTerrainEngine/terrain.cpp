@@ -73,7 +73,7 @@ void Terrain::update(Loader loader, Player player)
 	}
 }
 
-void Terrain::render(GLFWwindow* window, Camera camera, vector<Light> allLights, Vec4 clipPlane)
+void Terrain::render(GLFWwindow* window, Settings settings, Camera camera, vector<Light> allLights, Vec4 clipPlane)
 {
 	shader.start();
 	shader.setUniformVec4("clipPlane", clipPlane);
@@ -83,30 +83,46 @@ void Terrain::render(GLFWwindow* window, Camera camera, vector<Light> allLights,
 	shader.setUniformInt("grassTexture", 0);
 	shader.setUniformInt("rockTexture", 1);
 	shader.setUniformInt("sandTexture", 2);
+	shader.setUniformVec3("fogColor", settings.getFogColor());
+	shader.setUniformFloat("fogDencity", settings.getFogDencity());
+	shader.setUniformFloat("gamma", settings.getGamma());
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, grassTexture);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, rockTexture);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, sandTexture);
+
+	Vec3 renderCircleCenter = camera.getPosition() - Vec3{ TerrainChunk::SIZE / 2, 0, TerrainChunk::SIZE / 2 } +(camera.getViewVector() * 130);
+
 	for (auto chunk : chunks)
 	{
-		Model chunkModel = chunk.getModel(camera);
-		shader.setUniformMat4("modelMatrix", chunkModel.getModelMatrix());
+		Vec3 delta = renderCircleCenter - chunk.getPosition();
+		if (delta.lengthSquared() < 24000.0)
+		{
+			Model chunkModel = chunk.getModel(camera);
+			shader.setUniformMat4("modelMatrix", chunkModel.getModelMatrix());
 
-		glBindVertexArray(chunkModel.get_id());
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glEnableVertexAttribArray(2);
+			glBindVertexArray(chunkModel.get_id());
+			glEnableVertexAttribArray(0);
+			glEnableVertexAttribArray(1);
+			glEnableVertexAttribArray(2);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, grassTexture);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, rockTexture);
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, sandTexture);
+			glDrawElements(GL_TRIANGLES, chunkModel.get_vertexcount(), GL_UNSIGNED_INT, 0);
 
-		glDrawElements(GL_TRIANGLES, chunkModel.get_vertexcount(), GL_UNSIGNED_INT, 0);
-
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(2);
-		glBindVertexArray(0);
+			glDisableVertexAttribArray(0);
+			glDisableVertexAttribArray(1);
+			glDisableVertexAttribArray(2);
+			glBindVertexArray(0);
+		}
+		
 	}
+
+	glDisable(GL_BLEND);
 	
 	shader.stop();
 }
