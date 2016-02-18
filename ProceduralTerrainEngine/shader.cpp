@@ -177,7 +177,6 @@ long Shader::filelength(FILE *file) {
 	return numbytes;             // This is the file length
 }
 
-
 // ReadShaderFile(filename) - read a shader source string from a text-file
 unsigned char* Shader::readShaderFile(const char *filename) {
 	FILE *file;

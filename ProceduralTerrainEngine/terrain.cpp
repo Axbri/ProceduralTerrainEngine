@@ -56,21 +56,29 @@ void Terrain::update(Loader loader, Player player)
 		TerrainChunk newChunk = TerrainChunk(newChunkIndex.x, newChunkIndex.z);
 		if (!(find(chunks.begin(), chunks.end(), newChunk) != chunks.end()))
 		{
-			newChunk.load(loader);
+			//newChunk.load(loader);
 			chunks.push_back(newChunk);
 		}
 	}
 
+	for (auto &chunk : chunks)
+	{
+		if (chunk.load(loader))
+			break;
+	}
+
 	// remove chunks that are to far away
-	for (int i{ 0 }; i < chunks.size(); i++)
+	for (vector<TerrainChunk>::size_type i{ 0 }; i < chunks.size(); i++)
 	{
 		double chunkToCameraDistance = (cameraChunkIndex - chunks[i].getIndex()).lengthSquared();				
 		if (chunkToCameraDistance > (LOADING_DISTANCE*LOADING_DISTANCE+4))
 		{
 			chunks.erase(chunks.begin() + i);
-			//break; 
+			break; 
 		}
 	}
+
+	
 }
 
 void Terrain::render(GLFWwindow* window, Settings settings, Camera camera, vector<Light> allLights, Vec4 clipPlane)
@@ -99,7 +107,7 @@ void Terrain::render(GLFWwindow* window, Settings settings, Camera camera, vecto
 
 	Vec3 renderCircleCenter = camera.getPosition() - Vec3{ TerrainChunk::SIZE / 2, 0, TerrainChunk::SIZE / 2 } +(camera.getViewVector() * 130);
 
-	for (auto chunk : chunks)
+	for (auto &chunk : chunks)
 	{
 		Vec3 delta = renderCircleCenter - chunk.getPosition();
 		if (delta.lengthSquared() < 24000.0)

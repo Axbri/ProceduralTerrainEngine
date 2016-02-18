@@ -37,11 +37,9 @@ void main (void)
 	
 	vec4 textureColor = mix(grassColor, sandColor, smoothstep(0.4, 0.9, sandMixFactor)); 
 	
-	float rockMixFactor = smoothstep(0.15, 0.35, normalAngle); 		
+	float rockMixFactor = smoothstep(0.12, 0.30, normalAngle); 		
 	textureColor = mix(textureColor, rockColor, rockMixFactor); 
 						
-	//if(interpolatedWorldPos.y < 0)
-	//	textureColor = vec4(0.4, 0.5, 0.9, 1.0);
 			
 	vec3 unitToCameraVector = normalize(toCameraVector);	
 	vec3 totalDiffuse = vec3(0.0); 
