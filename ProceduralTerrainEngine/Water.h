@@ -8,6 +8,7 @@
 #include "model.h"
 #include "loader.h"
 #include "shader.h"
+#include "Settings.h"
 
 
 class Water
@@ -21,7 +22,7 @@ public:
 	void bindReflectionBuffer(); 
 	void bindRefractionBuffer(); 
 
-	void render(GLFWwindow* window, Camera camera, vector<Light> allLights);
+	void render(GLFWwindow* window, Settings settings, Camera camera, vector<Light> allLights);
 		
 	Vec4 getReflectionClipPlane(); 
 	Vec4 getRefractionClipPlane();

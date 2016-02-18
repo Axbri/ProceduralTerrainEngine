@@ -185,7 +185,7 @@ int main(void)
 		sky.render(window, settings, player.getCamera());
 		
 		terrain.render(window, settings, player.getCamera(), allLights, water.getReflectionClipPlane());
-		water.render(window, player.getCamera(), allLights);
+		water.render(window, settings, player.getCamera(), allLights);
 		
 
 		// wireframe rendering is of be default. 

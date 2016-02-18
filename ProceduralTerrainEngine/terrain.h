@@ -22,7 +22,7 @@ public:
 	int getNumberOfChunksLoaded(); 
 	int getQueueSize(); 
 
-	const int LOADING_DISTANCE = 8; 
+	const int LOADING_DISTANCE = 12; 
 
 private: 
 	

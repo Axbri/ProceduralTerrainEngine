@@ -1,7 +1,5 @@
 
-
 #include "terrain.h"
-
 
 Terrain::Terrain(Loader loader)
 {
@@ -77,8 +75,6 @@ void Terrain::update(Loader loader, Player player)
 			break; 
 		}
 	}
-
-	
 }
 
 void Terrain::render(GLFWwindow* window, Settings settings, Camera camera, vector<Light> allLights, Vec4 clipPlane)
@@ -126,12 +122,10 @@ void Terrain::render(GLFWwindow* window, Settings settings, Camera camera, vecto
 			glDisableVertexAttribArray(1);
 			glDisableVertexAttribArray(2);
 			glBindVertexArray(0);
-		}
-		
+		}		
 	}
 
-	glDisable(GL_BLEND);
-	
+	glDisable(GL_BLEND);	
 	shader.stop();
 }
 

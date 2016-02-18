@@ -24,6 +24,7 @@ void main (void)
 	
 	vec4 cameraSpacePos = projectionMatrix * viewMatrix * worldPosition;	
 	gl_Position = cameraSpacePos; 
+	
 	interpolatedCameraSpacePos = cameraSpacePos.xyz;  
 	interpolatedWorldPos = worldPosition.xyz; 	
 	interpolatedTextureCoords = textureCoords; 

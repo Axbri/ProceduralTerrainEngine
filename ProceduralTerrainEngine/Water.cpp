@@ -14,10 +14,8 @@ Water::Water(Loader loader)
 
 	dudvTexture = loader.loadBMPtexture("water_dudv.bmp");
 	normalTexture = loader.loadBMPtexture("water_nomal.bmp");
-
 	shader.createShader("waterVertexShader.glsl", "waterFragmentShader.glsl");
-
-
+	
 	reflectionFrameBuffer = FrameBufferUtilities::createBuffer();
 	reflectionTexture = FrameBufferUtilities::createTextureAttachment(REFLECTION_WIDTH, REFLECTION_HEIGHT);
 	reflectionDepthBuffer = FrameBufferUtilities::createDepthBufferAttachment(REFLECTION_WIDTH, REFLECTION_HEIGHT);
@@ -59,7 +57,7 @@ void Water::bindRefractionBuffer()
 	FrameBufferUtilities::bindBuffer(refractionFrameBuffer, REFRACTION_WIDTH, REFRACTION_HEIGHT);
 }
 
-void Water::render(GLFWwindow * window, Camera camera, vector<Light> allLights)
+void Water::render(GLFWwindow * window, Settings settings, Camera camera, vector<Light> allLights)
 {
 	Mat4 scale, translation;
 	scale.loadScale(SIZE, 1, SIZE);
@@ -77,6 +75,9 @@ void Water::render(GLFWwindow * window, Camera camera, vector<Light> allLights)
 	shader.setUniformInt("dudvTexture", 3);
 	shader.setUniformInt("normalTexture", 4);
 	shader.setUniformFloat("time", (float)glfwGetTime());
+	shader.setUniformVec3("fogColor", settings.getFogColor());
+	shader.setUniformFloat("fogDencity", settings.getFogDencity());
+	shader.setUniformFloat("gamma", settings.getGamma());
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

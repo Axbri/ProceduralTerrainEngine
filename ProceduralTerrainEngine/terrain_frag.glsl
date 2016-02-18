@@ -64,10 +64,9 @@ void main (void)
 	
 	vec3 materialAndLighting = textureColor.xyz * totalDiffuse + totalSpecular; 
 	//pixel_color = vec4(materialAndLighting, 1.0);	
+	 	
+	float fogMultiplier = clamp(-0.2 + length(interpolatedCameraSpacePos) * fogDencity, 0.0, 1.0); 
+	vec3 finalColor = mix(materialAndLighting, fogColor, fogMultiplier);	
 	
-	float toFragmentDistance = length(interpolatedCameraSpacePos);     	
-	float fogMultiplier = clamp(-0.2 + toFragmentDistance * fogDencity, 0.0, 1.0); 
-
-	vec3 finalColor = mix(materialAndLighting, fogColor, fogMultiplier);		
 	pixel_color = vec4(pow(materialAndLighting, vec3(1.0 / gamma)), smoothstep(0.0, 0.2, 1-fogMultiplier));	
 }

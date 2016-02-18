@@ -15,6 +15,9 @@ uniform sampler2D normalTexture;
 uniform float time; 
 uniform vec3 lightColor[8]; 
 uniform vec3 lightAttenuation[8];
+uniform vec3 fogColor;
+uniform float fogDencity; 
+uniform float gamma;
 
 const float amountOfRipple = 0.1; 
 const int duduScale = 1;
@@ -66,11 +69,11 @@ void main(void) {
 	vec3 blueWaterColor = vec3(0, 0.2, 0.4); 		
 	textureColor = mix(textureColor, blueWaterColor, clamp(waterDepth/100, 0.0, 0.3)); 
 		
-	float alpha = clamp(waterDepth * 20, 0.0, 1.0); 
-	float sunHeightMultiplyer = clamp(unitToLightVector[0].y * 5, 0.0, 1.0);
-	pixelColor = vec4(textureColor + min(totalSpecular, sunHeightMultiplyer), alpha);
-	
-	//pixelColor = texture(refractionTexture, normalizedDeviceCoords + ripple); 
-	//pixelColor = texture(reflectionTexture, vec2(normalizedDeviceCoords.x, 1-normalizedDeviceCoords.y) + ripple);
+	vec3 materialAndLighting = textureColor + totalSpecular; 
+		
+	float fogMultiplier = clamp(-2 + length(clipSpace) * fogDencity * 2, 0.0, 1.0); 
+	vec3 finalColor = mix(materialAndLighting, fogColor, fogMultiplier);		
+				
+	pixelColor = vec4(pow(finalColor, vec3(1.0 / gamma)), clamp(waterDepth * 20, 0.0, 1.0));
 	
 }
