@@ -20,6 +20,7 @@
 #include "WindowSizeHandler.h"
 #include "Skybox.h"
 #include "Settings.h"
+#include "ScreenshotTaker.h"
 
 // Define an error callback  
 static void error_callback(int error, const char* description)
@@ -107,6 +108,7 @@ int main(void)
 	vector<Light> allLights;
 	Water water{ loader };
 	Settings settings; 
+	ScreenshotTaker screenshotTaker; 
 
 	// one light realy far away (without attenuation)
 	allLights.push_back(Light{ 300000, 100000, -300000 });
@@ -149,6 +151,13 @@ int main(void)
 
 		terrain.update(loader, player); 
 		Vec3 chunkindex = terrain.getChunkIndex(player.getCamera().getPosition());
+
+		if (UserInput::pollKey(window, GLFW_KEY_F1))
+		{
+			Vec2 size = WindowSizeHandler::getFrameBufferSize();
+			screenshotTaker.screenshot(size.x, size.y);
+		}
+		
 
 		// ================================== render ==================================
 		
@@ -193,6 +202,7 @@ int main(void)
 
 		// render all the text: 
 		font.setColor(0, 0, 0); 
+		font.render("Press F1 to save screenshot", -0.98, 0.98);
 		font.render("Frame rate", framerate, 0.75, 0.98);
 		//font.render("you are in chunk", chunkindex, -0.95, 0.95);
 		//font.render("number of loaded chunks", terrain.getNumberOfChunksLoaded(), -0.95, 0.90);

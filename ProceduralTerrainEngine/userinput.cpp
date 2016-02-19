@@ -14,11 +14,10 @@ bool UserInput::cursorLocked = false;
 // This function is called automaticaly every time a key on the keybord is pressed or relesed. 
 void UserInput::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	// close the program if the user presses the escape-key
-	//if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) 
-	//{
-	//	glfwSetWindowShouldClose(window, GL_TRUE);
-	//}		
+	/*if (key == GLFW_KEY_F12 && action == GLFW_PRESS) 
+	{
+		
+	}	*/	
 }
 
 // Callback function for mouse position input from the user. 
